@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - [Descripción del tema]">
+    <meta name="keywords" content="Arduino, Robótica, Electrónica, Programación">
+    <title>RoboLab - Clase 2: Conceptos Básicos de la Electricidad</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Mermaid.js -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ 
+            startOnLoad: true, 
+            theme: 'dark',
+            securityLevel: 'loose',
+            fontFamily: 'Space Grotesk'
+        });
+    </script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        ELECTRICIDAD
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        NIVEL INICIAL
+                    </span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1 ml-auto">
+                        <i class="ph ph-calendar"></i> 21 de Enero 2026
+                    </span>
+                </div>
+                
+                <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    Clase 2: <span class="text-gradient">Conceptos Básicos de la Electricidad</span>
+                </h1>
+                
+                <!-- Lesson Meta -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 glass-panel rounded-2xl mb-12 text-center md:text-left">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Duración</span>
+                        <span class="text-slate-200">60 Minutos</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Nivel</span>
+                        <span class="text-slate-200">Principiante</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Prepa</span>
+                        <span class="text-slate-200">16-18 Años</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Prerrequisitos</span>
+                        <span class="text-slate-200">Clase 1 ok</span>
+                    </div>
+                </div>
+
+                <blockquote class="border-l-4 border-neon-blue bg-blue-500/5 p-6 rounded-r-2xl text-slate-300 italic mb-12">
+                    "La electricidad no fue inventada, fue descubierta. La naturaleza siempre la tuvo; nosotros solo aprendimos a entenderla y usarla."
+                </blockquote>
+            </div>
+
+            <!-- Contenido principal -->
+            <article class="prose prose-invert max-w-none">
+                
+                <!-- Objetivos -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                        <i class="ph ph-target text-neon-blue"></i> Objetivos de Aprendizaje
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="flex gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-neon-blue/40 transition-colors">
+                            <i class="ph ph-check-circle text-neon-green mt-1"></i>
+                            <p class="text-slate-300 text-sm"><b>Definir</b> carga, corriente, voltaje y resistencia.</p>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-neon-blue/40 transition-colors">
+                            <i class="ph ph-check-circle text-neon-green mt-1"></i>
+                            <p class="text-slate-300 text-sm"><b>Explicar</b> la diferencia entre CA y CD.</p>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-neon-blue/40 transition-colors">
+                            <i class="ph ph-check-circle text-neon-green mt-1"></i>
+                            <p class="text-slate-300 text-sm"><b>Reconocer</b> hitos históricos clave de la electricidad.</p>
+                        </div>
+                        <div class="flex gap-3 p-4 bg-white/5 border border-white/10 rounded-xl hover:border-neon-blue/40 transition-colors">
+                            <i class="ph ph-check-circle text-neon-green mt-1"></i>
+                            <p class="text-slate-300 text-sm"><b>Analizar</b> la "Guerra de las Corrientes" y Tesla vs Edison.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Introducción a la Electricidad -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-6">1. ¿Qué es realmente la electricidad?</h2>
+                    <p class="text-slate-300 leading-relaxed mb-8">
+                        La electricidad es un <strong>fenómeno físico fundamental</strong> que se manifiesta como el movimiento y la interacción de partículas cargadas, principalmente electrones, a través de un medio conductor. Es la expresión macroscópica de las fuerzas electromagnéticas, una de las cuatro fuerzas fundamentales de la naturaleza.
+                    </p>
+
+                    <div class="glass-panel p-6 border-l-4 border-neon-blue mb-12 bg-blue-500/5">
+                        <p class="text-slate-300 text-sm italic">
+                            A nivel subatómico, la electricidad se origina en la carga eléctrica inherente de partículas como los <strong>electrones</strong> (carga negativa) y los <strong>protones</strong> (carga positiva). Cuando estas cargas están en movimiento o en desequilibrio, generan campos eléctricos y magnéticos que interactúan y dan lugar a todos los fenómenos eléctricos que observamos.
+                        </p>
+                    </div>
+
+                    <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                        <i class="ph ph-circuitry text-neon-blue"></i> Corriente Eléctrica, Conductores y Aislantes
+                    </h3>
+                    
+                    <p class="text-slate-300 leading-relaxed mb-8">
+                        La corriente eléctrica se define como el flujo ordenado de carga eléctrica a través de un material. Los materiales se clasifican en función de su capacidad para permitir este flujo:
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                        <!-- Conductores -->
+                        <div class="glass-card p-6 border border-white/5 hover:border-cyan-500/30 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-4 text-cyan-400">
+                                <i class="ph ph-layout text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2">Conductores</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">Metales como el cobre o plata. Poseen <span class="text-cyan-400">electrones libres</span> que se mueven con facilidad.</p>
+                        </div>
+                        <!-- Aislantes -->
+                        <div class="glass-card p-6 border border-white/5 hover:border-red-500/30 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center mb-4 text-red-400">
+                                <i class="ph ph-shield-slash text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2">Aislantes</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">Plástico o vidrio. Tienen electrones <span class="text-red-400">fuertemente unidos</span>, impidiendo el flujo de carga.</p>
+                        </div>
+                        <!-- Semiconductores -->
+                        <div class="glass-card p-6 border border-white/5 hover:border-purple-500/30 transition-colors">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mb-4 text-purple-400">
+                                <i class="ph ph-cpu text-2xl"></i>
+                            </div>
+                            <h4 class="font-bold text-white mb-2">Semiconductores</h4>
+                            <p class="text-xs text-slate-400 leading-relaxed">Silicio o germanio. Su conductividad <span class="text-purple-400">puede ser controlada</span>. Base de los microchips.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dato Fascinante -->
+                    <div class="p-6 bg-gradient-to-r from-blue-600/10 via-blue-600/5 to-transparent border border-blue-500/20 rounded-2xl relative overflow-hidden group">
+                        <div class="absolute -right-8 -top-8 w-32 h-32 bg-blue-500/10 blur-3xl group-hover:bg-blue-500/20 transition-all duration-700"></div>
+                        <div class="flex gap-4 items-start relative z-10">
+                            <div class="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 animate-pulse">
+                                <i class="ph ph-sparkle text-2xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold mb-2 flex items-center gap-2">
+                                    Dato Fascinante <span class="text-[10px] px-2 py-0.5 bg-blue-500/20 rounded-full text-blue-300 border border-blue-500/30 uppercase">Física</span>
+                                </h4>
+                                <p class="text-sm text-slate-300 leading-relaxed">
+                                    Los electrones individuales se desplazan sorprendentemente lento por un conductor: <strong>apenas unos milímetros por segundo</strong>. Sin embargo, la energía eléctrica se propaga a través del circuito casi a la <strong>velocidad de la luz</strong> (≈ 300,000 km/s).
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Analogía de la Cadena de Bicicleta -->
+                    <div class="mt-8 p-8 glass-panel border border-white/5 rounded-3xl relative overflow-hidden group">
+                        <!-- Decorative icon -->
+                        <div class="absolute -bottom-6 -right-6 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-700">
+                            <i class="ph ph-bicycle text-[160px] text-white"></i>
+                        </div>
+                        
+                        <h4 class="text-lg font-bold text-white mb-6 flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-lg bg-neon-blue/20 flex items-center justify-center">
+                                <i class="ph ph-link text-neon-blue"></i>
+                            </div>
+                            La Analogía de la Cadena de Bicicleta
+                        </h4>
+                        <div class="aspect-video rounded-xl bg-black overflow-hidden relative group cursor-pointer mb-3">
+                            <!-- <img src="https://images.unsplash.com/photo-1544413660-299165566b1d?auto=format&fit=crop&q=80&w=1200" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform"> -->
+                            <iframe class="w-full h-full object-cover" width="560" height="315" src="https://www.youtube.com/embed/E3Rc4TmXt9I?si=KZJCZgdS34IvQPur" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+
+                        <div class="space-y-4 text-slate-300 leading-relaxed relative z-10">
+                            <p>
+                                Imagina una cadena de bicicleta perfectamente ajustada: al presionar el pedal, la fuerza se transmite <strong>instantáneamente</strong> a la rueda trasera, moviéndola, a pesar de que cada eslabón individual de la cadena solo se desplaza una distancia mínima.
+                            </p>
+                            <p class="text-sm text-slate-400 italic bg-white/5 p-4 rounded-xl border-l-4 border-neon-blue">
+                                "No es el eslabón el que viaja rápidamente del pedal a la rueda, sino la onda de movimiento o la tensión a través de la cadena lo que se propaga casi al instante."
+                            </p>
+                            <p>
+                                De forma análoga, en un circuito eléctrico, cuando cierras un interruptor, el <strong>campo eléctrico</strong> se establece y propaga casi a la velocidad de la luz, empujando a los electrones libres a comenzar a moverse. Aunque los electrones mismos se desplazan lentamente, la "señal" o la energía eléctrica fluye y activa los dispositivos de manera prácticamente instantánea.
+                            </p>
+                        </div>
+
+                        <div class="mt-8 p-4 bg-neon-blue/5 border border-neon-blue/20 rounded-2xl relative z-10">
+                            <p class="text-xs text-blue-200 leading-relaxed">
+                                <span class="font-bold text-neon-blue uppercase tracking-tighter mr-2">Concepto clave:</span>
+                                Esta dualidad entre el movimiento lento de las cargas individuales y la propagación increíblemente veloz de la energía es uno de los conceptos más contraintuitivos pero fundamentales para comprender la electrónica moderna.
+                            </p>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- 1. Definiciones Fundamentales -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-8">2. Definiciones Fundamentales</h2>
+
+                    <!-- Carga Eléctrica -->
+                    <div class="mb-12">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-yellow-500/10 flex items-center justify-center border border-yellow-500/20 text-yellow-400">
+                                <i class="ph ph-lightning text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Carga Eléctrica (Q)</h3>
+                        </div>
+                        
+                        <p class="text-slate-300 mb-6 font-light leading-relaxed">
+                            Es una propiedad fundamental de la materia que causa fuerzas eléctricas entre objetos. Todo está hecho de átomos, y los átomos contienen partículas cargadas: **protones (+) y electrones (-)**.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                            <div class="glass-panel p-6 border-l-4 border-yellow-500">
+                                <h4 class="text-sm font-bold text-white uppercase mb-4 opacity-70 tracking-widest">Estructura Atómica</h4>
+                                <div class="mermaid flex justify-center bg-transparent">
+                                    graph LR
+                                        A[Átomo] --- B[Protones +]
+                                        A --- C[Neutrones 0]
+                                        A --- D[Electrones -]
+                                        style A fill:#0B0F19,stroke:#555,color:#fff
+                                        style B fill:#ef4444,stroke:#ef4444,color:#fff
+                                        style C fill:#6b7280,stroke:#6b7280,color:#fff
+                                        style D fill:#3b82f6,stroke:#3b82f6,color:#fff
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <div class="p-4 rounded-xl bg-white/2 border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold block mb-1">Unidad de medida</span>
+                                    <span class="text-white font-mono text-lg">Coulomb (C)</span>
+                                </div>
+                                <div class="p-4 rounded-xl bg-white/2 border border-white/5">
+                                    <span class="text-xs text-slate-500 uppercase font-bold block mb-1">Ley Fundamental</span>
+                                    <span class="text-slate-300 text-sm">Cargas iguales se repelen, cargas opuestas se atraen.</span>
+                                </div>
+                                <div class="p-6 bg-blue-500/5 rounded-xl border border-blue-500/10 italic text-sm text-blue-200">
+                                    "Cuando te quitas un suéter de lana y tus cabellos se levantan, ¡es electricidad estática!"
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Corriente Eléctrica -->
+                    <div class="mb-12">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20 text-blue-400">
+                                <i class="ph ph-drop text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Corriente (I) - El Flujo</h3>
+                        </div>
+                        
+                        <p class="text-slate-300 mb-6 font-light leading-relaxed">
+                            Es la cantidad de electrones que fluyen por el conductor en un tiempo determinado. Imagina el <strong>caudal de un río</strong>: ¿pasa mucha agua por segundo o apenas un hilo? La corriente es exactamente eso, pero con cargas eléctricas.
+                        </p>
+
+                        <div class="p-6 glass-panel rounded-2xl mb-8 flex flex-col md:flex-row items-center gap-8 border-cyan-500/20">
+                            <div class="bg-black/40 p-6 rounded-xl border border-white/10 text-center min-w-[200px]">
+                                <span class="text-xs text-slate-500 font-bold uppercase block mb-2">Fórmula</span>
+                                <div class="text-3xl font-display font-light text-white italic">
+                                    I = <span class="border-b border-white px-2">Q</span> / t
+                                </div>
+                            </div>
+                            <div class="flex-1 space-y-4">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div class="text-sm">
+                                        <span class="text-neon-blue font-bold">I</span>: Corriente (Amperes, A)
+                                    </div>
+                                    <div class="text-sm text-slate-400">
+                                        <span class="text-white font-bold italic">Q</span>: Carga (Coulombs, C)
+                                    </div>
+                                </div>
+                                <div class="p-4 bg-white/5 rounded-xl border border-white/10">
+                                    <span class="text-[10px] text-slate-500 uppercase font-bold block mb-1">Unidad de Medida</span>
+                                    <span class="text-white font-mono text-sm">Amperios (A) o miliamperios (mA)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                            <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                                <div class="flex items-center gap-2 mb-2 text-blue-400">
+                                    <i class="ph ph-lightbulb"></i>
+                                    <span class="text-xs font-bold uppercase tracking-tighter">LED Típico</span>
+                                </div>
+                                <p class="text-sm text-slate-300">Consume entre <strong>10-20 mA</strong>.</p>
+                            </div>
+                            <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
+                                <div class="flex items-center gap-2 mb-2 text-blue-400">
+                                    <i class="ph ph-device-mobile"></i>
+                                    <span class="text-xs font-bold uppercase tracking-tighter">Smartphone</span>
+                                </div>
+                                <p class="text-sm text-slate-300">Carga con aproximadamente <strong>1-2 A</strong>.</p>
+                            </div>
+                        </div>
+
+                        <div class="overflow-hidden rounded-2xl border border-white/5 mb-8">
+                            <table class="w-full text-left border-collapse bg-white/2">
+                                <thead class="bg-white/5">
+                                    <tr>
+                                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Tipo</th>
+                                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Descripción</th>
+                                        <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Ejemplos</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-sm">
+                                    <tr class="hover:bg-cyan-500/5 transition-colors border-b border-white/5">
+                                        <td class="p-4 text-white font-bold">CD (Directa)</td>
+                                        <td class="p-4 text-slate-400">Flujo en una sola dirección</td>
+                                        <td class="p-4 text-slate-400 italic">Baterías, USB, Paneles</td>
+                                    </tr>
+                                    <tr class="hover:bg-cyan-500/5 transition-colors">
+                                        <td class="p-4 text-white font-bold">CA (Alterna)</td>
+                                        <td class="p-4 text-slate-400">Flujo que cambia de dirección</td>
+                                        <td class="p-4 text-slate-400 italic">Tomacorrientes</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-3">
+                            <i class="ph ph-warning-octagon text-red-500 text-xl"></i>
+                            <p class="text-xs text-red-200 uppercase font-bold tracking-tighter">¡Importante! Solo 0.1A pueden detener el corazón humano.</p>
+                        </div>
+                    </div>
+
+                    <!-- Voltaje -->
+                    <div class="mb-12">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400">
+                                <i class="ph ph-battery-charging text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Voltaje (V) - La Presión</h3>
+                        </div>
+                        <p class="text-slate-300 mb-6 font-light leading-relaxed">
+                            Es la fuerza electromotriz que empuja a los electrones a través del circuito. Imagina la <strong>altura de una cascada</strong> o la presión en un tanque de agua elevado: entre mayor sea la diferencia de altura, mayor será la fuerza con la que cae el agua.
+                        </p>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mb-8">
+                            <div class="glass-panel p-6 text-center">
+                                <span class="text-xs text-slate-500 block mb-4 uppercase tracking-widest">Analogía Hidráulica</span>
+                                <div class="mermaid flex justify-center bg-transparent grayscale opacity-80">
+                                    graph TD
+                                        A[Cascada Alta / Tanque Alto] -->|Mayor Presión| B[Suelo / Tanque Bajo]
+                                        style A fill:#3b82f6,color:#fff
+                                        style B fill:#3b82f6,color:#fff
+                                </div>
+                            </div>
+                            <div class="bg-white/2 border border-white/5 p-6 rounded-2xl">
+                                <h4 class="text-xs font-bold text-slate-500 uppercase mb-4">Valores Comunes</h4>
+                                <ul class="space-y-3">
+                                    <li class="flex justify-between text-sm border-b border-white/5 pb-2">
+                                        <span class="text-slate-400">Pila AA (Baja presión)</span>
+                                        <span class="text-white font-bold">1.5V</span>
+                                    </li>
+                                    <li class="flex justify-between text-sm border-b border-white/5 pb-2">
+                                        <span class="text-slate-400">Batería Cuadrada (Más presión)</span>
+                                        <span class="text-white font-bold text-purple-400">9V</span>
+                                    </li>
+                                    <li class="flex justify-between text-sm border-b border-white/5 pb-2">
+                                        <span class="text-slate-400">Hogar (México)</span>
+                                        <span class="text-white font-bold">127V</span>
+                                    </li>
+                                    <li class="flex justify-between text-sm">
+                                        <span class="text-slate-400">Líneas de Alta Tensión</span>
+                                        <span class="text-white font-bold text-neon-blue">400,000V</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="p-6 bg-purple-500/10 border border-purple-500/20 rounded-2xl flex items-center gap-4">
+                             <div class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-400 flex-shrink-0">
+                                <i class="ph ph-warning-circle text-2xl"></i>
+                             </div>
+                             <div>
+                                <h4 class="text-white font-bold text-sm uppercase tracking-tighter">Regla de Oro</h4>
+                                <p class="text-sm text-purple-200"><strong>Sin voltaje, no hay flujo de corriente.</strong> Es la chispa inicial que pone todo en marcha.</p>
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Resistencia -->
+                    <div class="mb-12">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-orange-500/10 flex items-center justify-center border border-orange-500/20 text-orange-400">
+                                <i class="ph ph-activity text-xl"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-white uppercase tracking-tight">Resistencia (R) - El Obstáculo</h3>
+                        </div>
+                        <p class="text-slate-300 mb-6 font-light leading-relaxed">
+                            Es la oposición al paso de la corriente eléctrica. Imagina una tubería: una <strong>tubería ancha y lisa</strong> permite un gran flujo de agua, mientras que una <strong>tubería estrecha</strong> llena de obstáculos dificulta el paso.
+                        </p>
+
+                        <div class="p-8 glass-panel rounded-3xl mb-8 relative group overflow-hidden border-orange-500/20">
+                            <div class="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-transparent"></div>
+                            <h4 class="text-lg font-bold text-white mb-6 relative italic">V = I × R <span class="ml-4 text-slate-500 font-normal not-italic text-sm">(Ley de Ohm)</span></h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+                                <div class="p-4 bg-black/40 border border-white/5 rounded-xl hover:border-orange-500/30 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2 text-orange-400">
+                                        <i class="ph ph-layout"></i>
+                                        <span class="text-[10px] font-bold uppercase">Cables de Cobre</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300">Tienen <strong>muy baja resistencia</strong>. Los electrones fluyen casi sin obstáculos.</p>
+                                </div>
+                                <div class="p-4 bg-black/40 border border-white/5 rounded-xl hover:border-orange-500/30 transition-colors">
+                                    <div class="flex items-center gap-2 mb-2 text-orange-400">
+                                        <i class="ph ph-circuitry"></i>
+                                        <span class="text-[10px] font-bold uppercase">Resistencias</span>
+                                    </div>
+                                    <p class="text-xs text-slate-300">Componentes diseñados para <strong>controlar el flujo</strong> de corriente en circuitos.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="p-6 bg-orange-500/5 border border-orange-500/10 rounded-2xl">
+                                <h4 class="text-xs font-bold text-white uppercase mb-4 opacity-70 tracking-widest flex items-center gap-2">
+                                    <i class="ph ph-chart-pie-slice"></i> Factores de Variación
+                                </h4>
+                                <div class="mermaid flex justify-center mb-0 grayscale">
+                                    pie title Factores que afectan la resistencia
+                                        "Material" : 35
+                                        "Longitud" : 25
+                                        "Área" : 25
+                                        "Temperatura" : 15
+                                </div>
+                            </div>
+                            <div class="p-6 bg-white/5 rounded-2xl border border-white/10 flex flex-col justify-center">
+                                <p class="text-sm text-slate-400 italic mb-4">"Los materiales conductores tienen baja resistencia, los aislantes tienen una resistencia extremadamente alta."</p>
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 bg-white/10 rounded-full text-[10px] text-slate-300 uppercase font-bold tracking-widest">Unidad: Ohmios (Ω)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Historia de la Electricidad -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-8">2. Historia de la Electricidad</h2>
+                    <div class="timeline mb-12">
+                        <!-- Item 1 -->
+                        <div class="timeline-item active" data-year="600 a.C.">
+                            <div class="timeline-dot bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">600 a.C.: El Ámbar de Tales</h4>
+                                <p class="text-sm text-slate-400">Tales de Mileto descubre que al frotar ámbar, este atrae objetos ligeros (electricidad estática).</p>
+                            </div>
+                        </div>
+                        <!-- Item 2 -->
+                        <div class="timeline-item" data-year="1800">
+                            <div class="timeline-dot bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1800: La Primera Pila</h4>
+                                <p class="text-sm text-slate-400">Alessandro Volta inventa la pila voltaica, la primera fuente de corriente continua fiable.</p>
+                            </div>
+                        </div>
+                        <!-- Item 3 -->
+                        <div class="timeline-item" data-year="1820">
+                            <div class="timeline-dot bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1820: Electromagnetismo</h4>
+                                <p class="text-sm text-slate-400">Hans Christian Ørsted descubre que una corriente eléctrica desvía la aguja de una brújula.</p>
+                            </div>
+                        </div>
+                        <!-- Item 4 -->
+                        <div class="timeline-item" data-year="1831">
+                            <div class="timeline-dot bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1831: Inducción</h4>
+                                <p class="text-sm text-slate-400">Michael Faraday demuestra que el movimiento de un imán genera electricidad (motor/generador).</p>
+                            </div>
+                        </div>
+                        <!-- Item 5 -->
+                        <div class="timeline-item" data-year="1879">
+                            <div class="timeline-dot bg-yellow-400 shadow-[0_0_10px_rgba(250,204,21,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1879: La Bombilla</h4>
+                                <p class="text-sm text-slate-400">Thomas Edison perfecciona la bombilla incandescente, iniciando la era de la iluminación eléctrica.</p>
+                            </div>
+                        </div>
+                        <!-- Item 6 -->
+                        <div class="timeline-item" data-year="1888">
+                            <div class="timeline-dot bg-cyan-400 shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1888: El Motor AC de Tesla</h4>
+                                <p class="text-sm text-slate-400">Nikola Tesla patenta el motor de inducción de corriente alterna, base de la industria moderna.</p>
+                            </div>
+                        </div>
+                        <!-- Item 7 -->
+                        <div class="timeline-item" data-year="1947">
+                            <div class="timeline-dot bg-red-400 shadow-[0_0_10px_rgba(248,113,113,0.5)]"></div>
+                            <div class="flex-1">
+                                <h4 class="text-white font-bold">1947: El Transistor</h4>
+                                <p class="text-sm text-slate-400">Invención del transistor en Bell Labs, dando inicio a la revolución de la electrónica y la computación.</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. La Guerra de las Corrientes -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-8">3. La Guerra de las Corrientes</h2>
+                    <p>A finales del siglo XIX, dos genios visionarios protagonizaron una de las batallas tecnológicas más épicas de la historia. Esta rivalidad no solo definió cómo se distribuye la electricidad hoy en día, sino que también marcó el nacimiento de la era eléctrica moderna.</p>
+                    <br>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        <!-- CA Card -->
+                        <div class="glass-panel p-8 rounded-3xl border-cyan-500/30 relative overflow-hidden group">
+                             <div class="absolute top-4 right-4 text-cyan-400/20 text-4xl font-bold group-hover:scale-110 transition-transform">AC</div>
+                             <h4 class="text-xl font-bold text-white mb-4">Corriente Alterna (CA)</h4>
+                             <p class="text-sm text-slate-400 mb-6 italic">Ganadora de la transmisión a gran escala.</p>
+                             <ul class="space-y-3 text-sm text-slate-300">
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Transmisión eficiente (pérdidas < 10%)</li>
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Uso de transformadores</li>
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Estándar en la red eléctrica</li>
+                             </ul>
+                        </div>
+                        <!-- CD Card -->
+                        <div class="glass-panel p-8 rounded-3xl border-orange-500/30 relative overflow-hidden group">
+                             <div class="absolute top-4 right-4 text-orange-400/20 text-4xl font-bold group-hover:scale-110 transition-transform">DC</div>
+                             <h4 class="text-xl font-bold text-white mb-4">Corriente Directa (CD)</h4>
+                             <p class="text-sm text-slate-400 mb-6 italic">Esencial para la electrónica actual.</p>
+                             <ul class="space-y-3 text-sm text-slate-300">
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Ideal para dispositivos de baja potencia</li>
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Baterías y paneles solares</li>
+                                <li class="flex items-center gap-2"><i class="ph ph-check text-neon-green"></i> Flujo constante en una dirección</li>
+                             </ul>
+                        </div>
+                    </div>
+
+                    <!-- Edison vs Tesla -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+                        <div class="glass-panel p-8 bg-gradient-to-br from-orange-500/5 to-transparent border-orange-500/20">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-orange-500/40">
+                                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/9d/Thomas_Edison2.jpg" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-white">Thomas Edison</h4>
+                                    <span class="text-xs text-orange-400 font-bold uppercase tracking-widest">El Inventor Empresario</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-400 leading-relaxed italic mb-6">
+                                "El genio es un 1% de inspiración y un 99% de transpiración."
+                            </p>
+                            <div class="p-4 bg-black/40 rounded-xl border border-white/5">
+                                <h5 class="text-xs font-bold text-white mb-3 uppercase tracking-tighter">Visión</h5>
+                                <p class="text-xs text-slate-300">Defensor de la CD. Buscaba practicidad, comercialización inmediata y control absoluto de sus patentes.</p>
+                            </div>
+                        </div>
+
+                        <div class="glass-panel p-8 bg-gradient-to-bl from-cyan-500/5 to-transparent border-cyan-500/20">
+                            <div class="flex items-center gap-4 mb-6">
+                                <div class="w-16 h-16 rounded-2xl overflow-hidden border-2 border-cyan-500/40">
+                                    <img src="https://imgs.search.brave.com/HwmciVPJX5-heRmdOFiK1EYlrSSyYNcbo4-Q_sYNGok/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly93YWxs/cGFwZXJjYXZlLmNv/bS93cC93cDE0ODI2/ODQ3LndlYnA" class="w-full h-full object-cover">
+                                </div>
+                                <div>
+                                    <h4 class="text-lg font-bold text-white">Nikola Tesla</h4>
+                                    <span class="text-xs text-cyan-400 font-bold uppercase tracking-widest">El Inventor Visionario</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-400 leading-relaxed italic mb-6">
+                                "El presente es de ellos; el futuro, del que cree en la belleza de sus sueños."
+                            </p>
+                            <div class="p-4 bg-black/40 rounded-xl border border-white/5">
+                                <h5 class="text-xs font-bold text-white mb-3 uppercase tracking-tighter">Visión</h5>
+                                <p class="text-xs text-slate-300">Pionero de la CA. Buscaba la eficiencia máxima y la transmisión inalámbrica de energía para todo el mundo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Recomendado -->
+                    <div class="glass-panel p-4 rounded-2xl border border-white/5 overflow-hidden">
+                        <div class="flex items-center gap-4 mb-4 px-2">
+                            <i class="ph ph-youtube-logo text-red-500 text-3xl"></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Documental visual</h4>
+                                <p class="text-xs text-slate-500 italic">#1 Biografías científicas - Nikola Tesla, el mago de la electricidad</p>
+                            </div>
+                        </div>
+                        <div class="aspect-video rounded-xl bg-black overflow-hidden">
+                            <iframe class="w-full h-full" src="https://www.youtube.com/embed/oESNo52Z-vo?si=oWRXVGi067LjyDR1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                </section>
+
+            </article>
+
+                <!-- 4. Tarea Semanal -->
+                <section class="mb-16">
+                    <h2 class="text-2xl font-bold text-white mb-6">📝 Tarea Semanal</h2>
+                    <div class="p-8 border border-yellow-500/20 bg-yellow-500/5 rounded-3xl relative overflow-hidden">
+                        <div class="absolute -top-12 -right-12 w-32 h-32 bg-yellow-500/10 blur-[60px]"></div>
+                        
+                        <h4 class="text-yellow-400 font-bold mb-4 flex items-center gap-2 text-lg">
+                            <i class="ph ph-magnifying-glass"></i> Investigación: 10 Puntos Clave sobre Nikola Tesla
+                        </h4>
+                        
+                        <div class="space-y-6 text-sm text-slate-300">
+                            <p><b>Instrucciones:</b> Extraer 10 puntos importantes del video sugerido, considerando logros científicos y tecnológicos, dificultades personales y su relación con Thomas Edison.</p>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                                    <h5 class="text-white font-bold mb-2 flex items-center gap-2">
+                                        <i class="ph ph-list-numbers text-yellow-500"></i> Formato de entrega
+                                    </h5>
+                                    <ul class="space-y-2 opacity-80">
+                                        <li>• Reporte escrito a mano (Foto/PDF)</li>
+                                        <li>• Portada oficial</li>
+                                        <li>• Conclusión personal (3-4 líneas)</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-black/20 p-4 rounded-xl border border-white/5">
+                                    <h5 class="text-white font-bold mb-2 flex items-center gap-2">
+                                        <i class="ph ph-calendar-check text-yellow-500"></i> Fecha Límite
+                                    </h5>
+                                    <p class="text-xs">Sábado antes de las 11:59 pm vía plataforma escolar.</p>
+                                    <p class="mt-2 text-yellow-500/70 font-bold tracking-widest text-[10px]">VALOR: 10 PUNTOS</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recursos Adicionales -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-6">Recursos Adicionales</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="https://phet.colorado.edu/sims/html/circuit-construction-kit-dc" target="_blank" class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition group">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-laptop text-cyan-400 text-xl"></i>
+                                <span class="text-slate-300 group-hover:text-white transition">Simulador PhET (Circuitos DC)</span>
+                            </div>
+                            <i class="ph ph-arrow-square-out text-slate-500 group-hover:text-white transition"></i>
+                        </a>
+                        
+                        <a href="https://www.scientificamerican.com/article/tesla-vs-edison" target="_blank" class="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition group">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-article text-orange-400 text-xl"></i>
+                                <span class="text-slate-300 group-hover:text-white transition">Tesla vs Edison (Scientific American)</span>
+                            </div>
+                            <i class="ph ph-arrow-square-out text-slate-500 group-hover:text-white transition"></i>
+                        </a>
+                    </div>
+                </section>
+
+            </article>
+
+            <!-- Conclusión -->
+            <div class="mt-20 p-10 glass-panel text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-400 via-blue-600 to-purple-600"></div>
+                <i class="ph ph-quotes text-5xl text-blue-500/20 mb-6 block mx-auto"></i>
+                <p class="text-lg md:text-xl text-slate-200 italic leading-relaxed max-w-2xl mx-auto mb-8 font-serif">
+                    "Si quieres descubrir los secretos del universo, piensa en términos de energía, frecuencia y vibración."
+                </p>
+                <div class="flex flex-col items-center">
+                    <span class="text-sm text-slate-500 uppercase tracking-widest font-bold">Nikola Tesla</span>
+                    <span class="text-xs text-slate-600 mt-2">v1.3 - RoboLab Academy - Electrónica Básica</span>
+                </div>
+            </div>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center mt-20 pt-12 border-t border-white/10">
+                <a href="topic-1.html" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 text-slate-400 hover:text-white transition border border-white/5">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>T1: Intro a la Robótica</span>
+                </a>
+                <div class="hidden sm:flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] text-slate-500 uppercase font-bold tracking-widest">
+                    <span>Progreso: 20%</span>
+                    <div class="w-20 h-1 bg-white/10 rounded-full overflow-hidden">
+                        <div class="w-[20%] h-full bg-neon-blue"></div>
+                    </div>
+                </div>
+                <button disabled class="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 text-slate-500 font-bold opacity-50 cursor-not-allowed border border-white/5">
+                    <span>Siguiente Tema</span>
+                    <i class="ph ph-lock"></i>
+                </button>
+            </div>
+
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

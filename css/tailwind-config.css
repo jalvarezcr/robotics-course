@@ -1,0 +1,22 @@
+/* =========================================
+   Tailwind CSS Configuration Styles
+   Custom theme colors and extensions
+   ========================================= */
+
+/* This file contains the style definitions that complement
+   the Tailwind config script. The actual configuration is
+   loaded via the tailwind.config script in HTML files. */
+
+/* Color Palette Reference:
+   - Dark BG: #0B0F19
+   - Dark Card: #111827
+   - Dark Hover: #1F2937
+   - Dark Border: #374151
+   - Neon Blue: #38bdf8
+   - Neon Purple: #c084fc
+   - Neon Green: #34d399
+   - Neon Red: #f87171
+   - Neon Yellow: #fbbf24
+*/
+
+/* Additional custom utilities can be added here */

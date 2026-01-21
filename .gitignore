@@ -1,0 +1,24 @@
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Ignore temporary files
+*.tmp
+*.bak
+*.log
+
+# Ignore build outputs (si agregas un bundler más adelante)
+dist/
+build/
+node_modules/
+
+# Keep assets folder structure but ignore content examples
+# assets/**
+# !assets/.gitkeep

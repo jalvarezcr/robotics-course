@@ -1,0 +1,19 @@
+# GitHub Pages Configuration
+# Esta configuración es opcional para Jekyll, pero ayuda a evitar procesamiento innecesario
+
+# Excluir archivos del build
+exclude:
+  - README.md
+  - STRUCTURE.md
+  - LICENSE
+  - .gitignore
+  - topics/README.md
+  - assets/README.md
+
+# Incluir archivos ocultos necesarios
+include:
+  - .nojekyll
+
+# Configuración básica
+markdown: kramdown
+highlighter: rouge

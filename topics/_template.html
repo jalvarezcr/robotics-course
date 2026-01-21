@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - [Descripción del tema]">
+    <meta name="keywords" content="Arduino, Robótica, Electrónica, Programación">
+    <title>RoboLab - [Título del Tema]</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- Header -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        HARDWARE
+                    </span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1">
+                        <i class="ph ph-calendar"></i> 20 de Enero 2026
+                    </span>
+                </div>
+                
+                <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+                    [Título del Tema]
+                </h1>
+                
+                <p class="text-xl text-slate-400">
+                    Descripción breve del contenido que aprenderás en esta lección.
+                </p>
+            </div>
+
+            <!-- Contenido principal -->
+            <article class="prose prose-invert max-w-none">
+                
+                <!-- Sección 1 -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-4">Introducción</h2>
+                    <p class="text-slate-300 leading-relaxed mb-6">
+                        Texto introductorio explicando los conceptos fundamentales...
+                    </p>
+                    
+                    <!-- Bloque de información -->
+                    <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl flex gap-3 mb-6">
+                        <i class="ph ph-info text-neon-blue text-xl flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h5 class="text-neon-blue font-bold text-sm mb-1">Nota Informativa</h5>
+                            <p class="text-sm text-blue-200/70">Información adicional relevante para el estudiante.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sección 2: Ejemplo con código -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-4">Implementación</h2>
+                    
+                    <p class="text-slate-300 leading-relaxed mb-6">
+                        Explicación del código que vamos a implementar...
+                    </p>
+
+                    <!-- Bloque de código -->
+                    <div class="glass-panel p-6 rounded-2xl mb-6">
+                        <h3 class="text-lg font-bold text-white mb-4">Código Arduino</h3>
+                        <pre class="bg-[#1e1e1e] rounded-xl p-4 overflow-x-auto"><code class="language-cpp text-sm text-slate-300">// Ejemplo de código
+void setup() {
+  pinMode(13, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+  digitalWrite(13, LOW);
+  delay(1000);
+}</code></pre>
+                    </div>
+                </section>
+
+                <!-- Sección 3: Recursos -->
+                <section class="mb-12">
+                    <h2 class="text-2xl font-bold text-white mb-4">Recursos Descargables</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <a href="#" class="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition group">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-file-pdf text-red-400 text-xl"></i>
+                                <span class="text-slate-300 group-hover:text-white transition">Guía de laboratorio.pdf</span>
+                            </div>
+                            <i class="ph ph-download-simple text-slate-500 group-hover:text-white transition"></i>
+                        </a>
+                        
+                        <a href="#" class="flex items-center justify-between p-4 rounded-lg bg-white/5 hover:bg-white/10 border border-white/5 transition group">
+                            <div class="flex items-center gap-3">
+                                <i class="ph ph-code text-neon-blue text-xl"></i>
+                                <span class="text-slate-300 group-hover:text-white transition">código_fuente.ino</span>
+                            </div>
+                            <i class="ph ph-download-simple text-slate-500 group-hover:text-white transition"></i>
+                        </a>
+                    </div>
+                </section>
+
+            </article>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center pt-12 border-t border-white/10">
+                <a href="#" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>Tema Anterior</span>
+                </a>
+                <a href="#" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <span>Siguiente Tema</span>
+                    <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

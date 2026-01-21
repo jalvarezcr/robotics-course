@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RoboLab - Sistema de Diseño & Componentes</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+    <!-- Tailwind Config -->
+    <script src="js/tailwind-config.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body class="antialiased min-h-screen flex flex-col pb-20">
+
+    <!-- Navbar de la Guía -->
+    <nav class="sticky top-0 z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center">
+                    <i class="ph ph-swatches text-white text-lg"></i>
+                </div>
+                <span class="font-display font-bold text-xl text-white">RoboLab <span class="text-slate-500 text-sm font-sans font-normal">| Design System</span></span>
+            </div>
+            <div class="hidden md:flex gap-4 text-sm font-medium text-slate-400">
+                <a href="#typography" class="hover:text-neon-blue transition">Tipografía</a>
+                <a href="#cards" class="hover:text-neon-blue transition">Tarjetas</a>
+                <a href="#interactive" class="hover:text-neon-blue transition">Interactivos</a>
+                <a href="#advanced" class="hover:text-neon-blue transition">Avanzados</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-20">
+
+        <!-- 1. SECCIÓN TIPOGRAFÍA Y ALERTAS -->
+        <section id="typography" class="space-y-8">
+            <div class="border-b border-white/10 pb-4 mb-8">
+                <h2 class="text-2xl font-display font-bold text-white">1. Tipografía & Alertas</h2>
+                <p class="text-slate-400">Estilos de texto base y bloques de notificación.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- Headings -->
+                <div class="glass-panel p-6 rounded-2xl space-y-4">
+                    <h1 class="text-4xl font-display font-bold text-white">H1. Título Principal</h1>
+                    <h2 class="text-3xl font-display font-bold text-white">H2. Título de Sección</h2>
+                    <h3 class="text-2xl font-bold text-white">H3. Subtítulo</h3>
+                    <h4 class="text-xl font-semibold text-neon-blue">H4. Título con Acento</h4>
+                    <p class="text-slate-400 leading-relaxed">
+                        Párrafo estándar. El texto del cuerpo debe tener buena legibilidad. Usamos <span class="text-slate-200 font-medium">Slate-400</span> para texto secundario y <span class="text-white">White</span> para énfasis.
+                    </p>
+                </div>
+
+                <!-- Alerts / Notes -->
+                <div class="space-y-4">
+                    <!-- Warning Block -->
+                    <div class="p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-xl flex gap-3">
+                        <i class="ph ph-warning text-neon-yellow text-xl flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h5 class="text-neon-yellow font-bold text-sm mb-1">Precaución</h5>
+                            <p class="text-sm text-yellow-200/70">Este bloque se usa para advertencias críticas de hardware o seguridad eléctrica.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Info Block -->
+                    <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl flex gap-3">
+                        <i class="ph ph-info text-neon-blue text-xl flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h5 class="text-neon-blue font-bold text-sm mb-1">Nota Informativa</h5>
+                            <p class="text-sm text-blue-200/70">Información adicional o curiosidades que enriquecen la lección.</p>
+                        </div>
+                    </div>
+
+                    <!-- Success Block -->
+                    <div class="p-4 bg-green-500/5 border border-green-500/20 rounded-xl flex gap-3">
+                        <i class="ph ph-check-circle text-neon-green text-xl flex-shrink-0 mt-0.5"></i>
+                        <div>
+                            <h5 class="text-neon-green font-bold text-sm mb-1">Ejercicio Completado</h5>
+                            <p class="text-sm text-green-200/70">Feedback positivo al terminar una tarea.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. TARJETAS Y CONTENEDORES -->
+        <section id="cards" class="space-y-8">
+            <div class="border-b border-white/10 pb-4 mb-8">
+                <h2 class="text-2xl font-display font-bold text-white">2. Tarjetas & Recursos</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Basic Resource Card -->
+                <a href="#" class="glass-panel p-5 rounded-2xl group hover:border-neon-blue/30 transition-all hover:-translate-y-1">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center group-hover:bg-neon-blue/20 transition">
+                            <i class="ph ph-file-pdf text-2xl text-slate-300 group-hover:text-neon-blue"></i>
+                        </div>
+                        <i class="ph ph-download-simple text-slate-500 group-hover:text-white"></i>
+                    </div>
+                    <h4 class="text-white font-bold mb-1">Datasheet L298N</h4>
+                    <p class="text-xs text-slate-500">PDF • 2.4 MB</p>
+                </a>
+
+                <!-- Video Card -->
+                <div class="glass-panel p-1 rounded-2xl col-span-1 md:col-span-2">
+                    <div class="relative aspect-video bg-black rounded-xl overflow-hidden group cursor-pointer">
+                        <div class="absolute inset-0 bg-cover bg-center opacity-60 group-hover:scale-105 transition duration-500" style="background-image: url('https://images.unsplash.com/photo-1555664424-778a1e5e1b48?q=80&w=1000&auto=format&fit=crop');"></div>
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/10 backdrop-blur rounded-full flex items-center justify-center group-hover:bg-neon-blue group-hover:scale-110 transition shadow-xl">
+                                <i class="ph ph-play-fill text-white text-2xl ml-1"></i>
+                            </div>
+                        </div>
+                        <span class="absolute bottom-4 left-4 bg-black/60 backdrop-blur px-2 py-1 rounded text-xs font-mono text-white">04:25</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. COMPONENTES INTERACTIVOS -->
+        <section id="interactive" class="space-y-8">
+            <div class="border-b border-white/10 pb-4 mb-8">
+                <h2 class="text-2xl font-display font-bold text-white">3. Interactividad (JS)</h2>
+            </div>
+
+            <!-- Tabs Component -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="text-lg font-bold text-white mb-4">Tabs (Pestañas)</h3>
+                
+                <!-- Tab Header -->
+                <div class="flex border-b border-white/10 mb-6" id="code-tabs">
+                    <button class="tab-btn active px-4 py-2 text-sm font-medium text-neon-blue border-b-2 border-neon-blue transition" data-target="cpp">
+                        C++ (Arduino)
+                    </button>
+                    <button class="tab-btn px-4 py-2 text-sm font-medium text-slate-400 hover:text-white border-b-2 border-transparent transition" data-target="python">
+                        Python (RPi)
+                    </button>
+                </div>
+
+                <!-- Tab Content 1 -->
+                <div id="cpp" class="tab-content block relative group">
+                    <div class="absolute right-2 top-2">
+                        <button class="copy-btn p-2 bg-white/10 hover:bg-white/20 rounded-md text-white transition text-xs flex items-center gap-1" data-code="cpp-code">
+                            <i class="ph ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <pre><code id="cpp-code" class="language-cpp rounded-xl text-sm">// Control simple de LED
+void setup() {
+  pinMode(13, OUTPUT);
+}
+void loop() {
+  digitalWrite(13, HIGH);
+  delay(1000);
+}</code></pre>
+                </div>
+
+                <!-- Tab Content 2 -->
+                <div id="python" class="tab-content hidden relative group">
+                    <div class="absolute right-2 top-2">
+                        <button class="copy-btn p-2 bg-white/10 hover:bg-white/20 rounded-md text-white transition text-xs flex items-center gap-1" data-code="py-code">
+                            <i class="ph ph-copy"></i> Copiar
+                        </button>
+                    </div>
+                    <pre><code id="py-code" class="language-python rounded-xl text-sm"># Control simple con GPIO Zero
+from gpiozero import LED
+from time import sleep
+
+led = LED(17)
+
+while True:
+    led.on()
+    sleep(1)
+    led.off()
+    sleep(1)</code></pre>
+                </div>
+            </div>
+
+            <!-- Accordion Component -->
+            <div class="glass-panel p-1 rounded-2xl">
+                <div class="space-y-1">
+                    <!-- Item 1 -->
+                    <div class="overflow-hidden rounded-xl">
+                        <button class="accordion-trigger w-full flex justify-between items-center p-4 bg-white/5 hover:bg-white/10 transition text-left">
+                            <span class="font-bold text-slate-200">Pregunta Frecuente #1</span>
+                            <i class="ph ph-caret-down text-slate-400 transition-transform duration-300"></i>
+                        </button>
+                        <div class="accordion-body max-h-0 overflow-hidden transition-all duration-300 bg-black/20">
+                            <div class="p-4 text-slate-400 text-sm">
+                                Respuesta detallada a la pregunta frecuente. El contenido se expande suavemente.
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Item 2 -->
+                    <div class="overflow-hidden rounded-xl">
+                        <button class="accordion-trigger w-full flex justify-between items-center p-4 bg-white/5 hover:bg-white/10 transition text-left">
+                            <span class="font-bold text-slate-200">Pregunta Frecuente #2</span>
+                            <i class="ph ph-caret-down text-slate-400 transition-transform duration-300"></i>
+                        </button>
+                        <div class="accordion-body max-h-0 overflow-hidden transition-all duration-300 bg-black/20">
+                            <div class="p-4 text-slate-400 text-sm">
+                                Otra respuesta detallada.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Trigger Example -->
+            <div class="glass-panel p-6 rounded-2xl flex items-center justify-between">
+                <div>
+                    <h3 class="font-bold text-white">Modal de Información</h3>
+                    <p class="text-sm text-slate-400">Ventana emergente para teoría extendida.</p>
+                </div>
+                <button onclick="toggleModal('demo-modal')" class="px-5 py-2 bg-neon-blue/10 text-neon-blue border border-neon-blue/20 rounded-lg hover:bg-neon-blue/20 transition">
+                    Abrir Modal
+                </button>
+            </div>
+        </section>
+
+        <!-- 4. ESTRUCTURA COMPLEJA -->
+        <section id="structure" class="space-y-8">
+            <div class="border-b border-white/10 pb-4 mb-8">
+                <h2 class="text-2xl font-display font-bold text-white">4. Estructuras Complejas</h2>
+            </div>
+
+            <!-- Timeline Vertical (Pasos) -->
+            <div class="glass-panel p-8 rounded-2xl">
+                <h3 class="text-xl font-bold text-white mb-6">Timeline / Guía Paso a Paso</h3>
+                
+                <div class="relative pl-4">
+                    <!-- Step 1 -->
+                    <div class="relative pl-12 pb-12 border-l-2 border-white/10 last:border-0">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-neon-blue shadow-[0_0_10px_rgba(56,189,248,0.5)]"></div>
+                        <h4 class="text-lg font-bold text-white mb-2">Fase de Diseño</h4>
+                        <p class="text-slate-400 text-sm">Bocetado y selección de componentes electrónicos.</p>
+                    </div>
+                    <!-- Step 2 -->
+                    <div class="relative pl-12 pb-12 border-l-2 border-white/10 last:border-0">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-dark-card border-2 border-slate-500"></div>
+                        <h4 class="text-lg font-bold text-slate-300 mb-2">Ensamblaje</h4>
+                        <p class="text-slate-500 text-sm">Soldadura de pines y montaje en chasis.</p>
+                    </div>
+                     <!-- Step 3 -->
+                     <div class="relative pl-12 border-l-2 border-transparent">
+                        <div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-dark-card border-2 border-slate-500"></div>
+                        <h4 class="text-lg font-bold text-slate-300 mb-2">Programación</h4>
+                        <p class="text-slate-500 text-sm">Carga del firmware final.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Image Carousel / Slider -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold text-white">Galería de Proyecto</h3>
+                    <div class="flex gap-2">
+                        <button id="prev-slide" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition"><i class="ph ph-caret-left"></i></button>
+                        <button id="next-slide" class="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white transition"><i class="ph ph-caret-right"></i></button>
+                    </div>
+                </div>
+
+                <div class="relative overflow-hidden rounded-xl aspect-video bg-black">
+                    <div id="slider-track" class="flex transition-transform duration-500 ease-out h-full">
+                        <!-- Slide 1 -->
+                        <div class="min-w-full h-full relative">
+                            <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Slide 1">
+                            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6">
+                                <span class="text-neon-blue text-xs font-bold uppercase">Hardware</span>
+                                <h4 class="text-white font-bold text-lg">Placa Base Personalizada</h4>
+                            </div>
+                        </div>
+                        <!-- Slide 2 -->
+                        <div class="min-w-full h-full relative">
+                            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Slide 2">
+                            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6">
+                                <span class="text-neon-green text-xs font-bold uppercase">Seguridad</span>
+                                <h4 class="text-white font-bold text-lg">Cifrado de Datos</h4>
+                            </div>
+                        </div>
+                        <!-- Slide 3 -->
+                        <div class="min-w-full h-full relative">
+                            <img src="https://images.unsplash.com/photo-1581092921461-eab62e97a782?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover opacity-80" alt="Slide 3">
+                            <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black/90 to-transparent p-6">
+                                <span class="text-neon-purple text-xs font-bold uppercase">Mecánica</span>
+                                <h4 class="text-white font-bold text-lg">Montaje de Motores</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. COMPONENTES AVANZADOS & EVALUACIÓN (NUEVO) -->
+        <section id="advanced" class="space-y-8">
+            <div class="border-b border-white/10 pb-4 mb-8">
+                <h2 class="text-2xl font-display font-bold text-white">5. Avanzados & Evaluación</h2>
+            </div>
+
+            <!-- Terminal Emulator -->
+            <div class="glass-panel p-6 rounded-2xl">
+                <h3 class="font-bold text-white mb-4">Emulador de Terminal</h3>
+                <div class="bg-[#1e1e1e] rounded-xl overflow-hidden font-mono text-sm border border-white/10 shadow-2xl">
+                    <div class="bg-[#2d2d2d] px-4 py-2 flex items-center gap-2 border-b border-white/5">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2 text-xs text-slate-400">serial_monitor — 9600 baud</span>
+                    </div>
+                    <div class="p-4 text-slate-300 space-y-1 h-48 overflow-y-auto">
+                        <div class="flex gap-2">
+                            <span class="text-neon-green">root@bot:~$</span>
+                            <span>inicializar_sensores</span>
+                        </div>
+                        <div class="text-slate-500">[INFO] Cargando librerías Wire.h...</div>
+                        <div class="text-slate-500">[INFO] Buscando dispositivos I2C...</div>
+                        <div>Dispositivo encontrado en 0x27 <span class="text-neon-blue">(LCD 16x2)</span></div>
+                        <div>Dispositivo encontrado en 0x68 <span class="text-neon-blue">(MPU6050)</span></div>
+                        <div class="text-neon-green mt-2">>> Sistema listo. Esperando comandos...</div>
+                        <div class="animate-pulse">_</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Grid de 2 Columnas para Quiz y Métricas -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Interactive Quiz Widget -->
+                <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10">
+                        <i class="ph ph-question text-6xl text-white"></i>
+                    </div>
+                    
+                    <span class="text-xs font-bold text-neon-purple uppercase tracking-wider mb-2 block">Autoevaluación</span>
+                    <h4 class="text-xl font-bold text-white mb-4">Quiz Rápido</h4>
+                    <p class="text-slate-400 mb-6 text-sm">¿Qué función de Arduino se ejecuta una sola vez al inicio?</p>
+                    
+                    <form id="quiz-demo" class="space-y-3">
+                        <label class="flex items-center p-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition group">
+                            <input type="radio" name="arduino-quiz" value="loop" class="accent-neon-blue">
+                            <span class="ml-3 text-slate-300 group-hover:text-white transition">void loop()</span>
+                        </label>
+                        <label class="flex items-center p-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition group">
+                            <input type="radio" name="arduino-quiz" value="setup" class="accent-neon-blue">
+                            <span class="ml-3 text-slate-300 group-hover:text-white transition">void setup()</span>
+                        </label>
+                        <label class="flex items-center p-3 rounded-lg border border-white/5 bg-white/5 hover:bg-white/10 cursor-pointer transition group">
+                            <input type="radio" name="arduino-quiz" value="main" class="accent-neon-blue">
+                            <span class="ml-3 text-slate-300 group-hover:text-white transition">int main()</span>
+                        </label>
+                    </form>
+
+                    <div id="quiz-feedback" class="mt-4 hidden p-3 rounded-lg text-sm"></div>
+
+                    <button id="check-quiz" class="mt-6 w-full py-2 bg-neon-blue text-dark-bg font-bold rounded-lg hover:bg-cyan-300 transition">
+                        Verificar Respuesta
+                    </button>
+                </div>
+
+                <!-- Metrics & Stats Grid -->
+                <div class="space-y-6">
+                    <!-- Sensor Stats -->
+                    <div class="glass-panel p-5 rounded-2xl">
+                        <h4 class="font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="ph ph-chart-bar text-neon-green"></i> Lecturas del Sensor
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-black/20 p-3 rounded-xl border border-white/5 text-center">
+                                <span class="text-xs text-slate-500 block mb-1">Temperatura</span>
+                                <span class="text-2xl font-mono text-white">24.5°C</span>
+                            </div>
+                            <div class="bg-black/20 p-3 rounded-xl border border-white/5 text-center">
+                                <span class="text-xs text-slate-500 block mb-1">Humedad</span>
+                                <span class="text-2xl font-mono text-neon-blue">62%</span>
+                            </div>
+                            <div class="col-span-2 bg-black/20 p-3 rounded-xl border border-white/5 text-center">
+                                <span class="text-xs text-slate-500 block mb-1">Estado Batería</span>
+                                <div class="w-full bg-slate-700 h-2 rounded-full mt-2 overflow-hidden">
+                                    <div class="bg-neon-green h-full w-[85%]"></div>
+                                </div>
+                                <span class="text-xs text-slate-400 mt-1 block">85% Restante</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Instructor Card -->
+                    <div class="glass-panel p-4 rounded-2xl flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 p-0.5">
+                            <img src="https://i.pravatar.cc/150?u=robotics" alt="Instructor" class="w-full h-full rounded-full object-cover border-2 border-dark-bg">
+                        </div>
+                        <div>
+                            <h5 class="text-white font-bold text-sm">Ing. Sarah Connor</h5>
+                            <p class="text-xs text-slate-400">Esp. en Sistemas Embebidos</p>
+                        </div>
+                        <button class="ml-auto p-2 bg-white/5 hover:bg-white/10 rounded-full text-slate-300 hover:text-white transition">
+                            <i class="ph ph-envelope-simple text-lg"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Table -->
+            <div class="glass-panel p-6 rounded-2xl overflow-hidden">
+                <h3 class="font-bold text-white mb-4">Tabla Comparativa</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/10 text-slate-400 text-sm">
+                                <th class="py-3 px-4">Característica</th>
+                                <th class="py-3 px-4 text-neon-blue">Arduino Uno</th>
+                                <th class="py-3 px-4 text-neon-purple">Raspberry Pi 4</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 px-4 text-slate-300 font-medium">Procesador</td>
+                                <td class="py-3 px-4 text-slate-400">ATmega328P (16 MHz)</td>
+                                <td class="py-3 px-4 text-slate-400">Broadcom BCM2711 (1.5 GHz)</td>
+                            </tr>
+                            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                                <td class="py-3 px-4 text-slate-300 font-medium">Voltaje Lógico</td>
+                                <td class="py-3 px-4 text-slate-400">5V</td>
+                                <td class="py-3 px-4 text-slate-400">3.3V</td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-3 px-4 text-slate-300 font-medium">Uso Principal</td>
+                                <td class="py-3 px-4 text-slate-400">Control Hardware / Real-time</td>
+                                <td class="py-3 px-4 text-slate-400">Procesamiento / OS Completo</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- GENERIC MODAL TEMPLATE -->
+    <div id="demo-modal" class="fixed inset-0 z-[100] hidden" role="dialog">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm transition-opacity opacity-0 modal-backdrop"></div>
+        
+        <!-- Panel -->
+        <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="flex min-h-full items-center justify-center p-4">
+                <div class="relative transform overflow-hidden rounded-2xl bg-[#0F1420] border border-white/10 text-left shadow-2xl transition-all w-full max-w-lg opacity-0 scale-95 modal-panel">
+                    
+                    <div class="p-6 border-b border-white/5 flex justify-between items-center">
+                        <h3 class="text-xl font-bold text-white">Título del Modal</h3>
+                        <button onclick="toggleModal('demo-modal')" class="text-slate-400 hover:text-white transition">
+                            <i class="ph ph-x text-lg"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <p class="text-slate-400">
+                            Este es un componente modal reutilizable. Puede contener formularios, imágenes ampliadas o explicaciones teóricas extensas.
+                        </p>
+                        <div class="p-4 bg-white/5 rounded-lg border border-white/5">
+                            <code class="text-neon-green text-sm">console.log("Interactive content inside");</code>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 bg-black/20 flex justify-end gap-3">
+                        <button onclick="toggleModal('demo-modal')" class="px-4 py-2 text-slate-300 hover:text-white transition text-sm">Cancelar</button>
+                        <button onclick="toggleModal('demo-modal')" class="px-4 py-2 bg-neon-blue text-dark-bg font-bold rounded-lg hover:bg-cyan-300 transition text-sm">Confirmar Acción</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Highlight.js Initialization -->
+    <script>hljs.highlightAll();</script>
+    
+    <!-- Interactive Components -->
+    <script src="js/components.js"></script>
+</body>
+</html>

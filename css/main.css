@@ -1,0 +1,224 @@
+/* =========================================
+   RoboLab - Main Stylesheet
+   Curso de Robótica - Sistema de Estilos
+   ========================================= */
+
+/* --- BASE STYLES --- */
+body {
+    background-color: #0B0F19;
+    color: #e2e8f0;
+}
+
+/* --- GLASS EFFECTS --- */
+/* Bloques con borde degradado delgado y sombra marcada (versión intensificada)
+   - Borde degradado más saturado
+   - Fondo INTERIOR SOLIDO para mayor contraste (tono #0F1420)
+   - Degradado visible SOLO en el borde (capa dedicada)
+   - Resplandor exterior mediante ::before para contraste con fondo oscuro
+   - Clase `.glass-strong` opcional para un borde aún más pronunciado
+*/
+.glass-card,
+.glass-panel {
+    position: relative;
+    z-index: 0;
+    border-radius: 1rem; /* mantener coherencia con el diseño */
+
+    /* Borde delgado con degradado SOLO en el borde: capa interna (fondo sólido) + capa externa (borde) */
+    border: 1.5px solid transparent; /* funciona con background-clip */
+    /* capa 1: fondo interior sólido (se aplica a padding-box)
+       capa 2: degradado del borde (se aplica a border-box) */
+    background-color: #0F1420;
+    background-image: linear-gradient(#0F1420, #0F1420),
+                      linear-gradient(90deg, rgba(56,189,248,0.98), rgba(192,132,252,0.95), rgba(52,211,153,0.98));
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+
+    /* Vidrio y suavizado */
+    backdrop-filter: blur(12px);
+
+    /* Sombra base y halos de color más marcados para resaltar sobre el fondo */
+    box-shadow: 0 8px 40px rgba(6,9,12,0.75), /* sombra principal profunda */
+                0 0 22px rgba(56,189,248,0.14), /* halo azul */
+                0 0 40px rgba(192,132,252,0.06); /* halo púrpura suave */
+
+    transition: box-shadow 220ms ease, transform 200ms ease;
+    overflow: hidden;
+}
+
+/* Resplandor exterior suave para dar más contraste (no afecta layout) */
+.glass-card::before,
+.glass-panel::before {
+    content: "";
+    position: absolute;
+    inset: -2px; /* fuera del área para crear halo exterior */
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgba(56,189,248,0.22), rgba(192,132,252,0.18), rgba(52,211,153,0.22));
+    filter: blur(8px);
+    opacity: 0.95;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Hover: intensificar el resplandor y elevar ligeramente */
+.glass-card:hover,
+.glass-panel:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 60px rgba(6,9,12,0.80),
+                0 0 48px rgba(56,189,248,0.22),
+                0 0 72px rgba(192,132,252,0.12);
+}
+
+/* Variante opcional más pronunciada para usar cuando se quiera destacar mucho */
+.glass-strong {
+    border-width: 2px;
+    background-color: #0F1420;
+    background-image: linear-gradient(#0F1420, #0F1420),
+                      linear-gradient(90deg, rgba(56,189,248,1), rgba(192,132,252,0.98), rgba(16,185,129,1));
+    background-origin: padding-box, border-box;
+    background-clip: padding-box, border-box;
+}
+
+/* Contorno interior tenue para mayor definición */
+.glass-card::after,
+.glass-panel::after {
+    content: "";
+    position: absolute;
+    inset: 1px; /* deja el borde degradado visible */
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); /* ligero brillo interior */
+}
+
+
+
+/* --- TEXT EFFECTS --- */
+.text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(to right, #38bdf8, #c084fc, #34d399);
+}
+
+/* --- SCROLLBAR CUSTOM --- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0B0F19;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
+}
+
+/* --- ANIMATIONS --- */
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-enter {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+.fade-enter-active {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 300ms, transform 300ms;
+}
+
+/* --- COMPONENTES: Callout & Timeline --- */
+.callout {
+    border-radius: 0.75rem;
+    background-color: #0F1420;
+    border: 1px solid rgba(255,255,255,0.03);
+}
+
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    cursor: pointer;
+    padding: 12px;
+    border-radius: 0.75rem;
+    transition: background 180ms ease, transform 180ms ease;
+}
+
+.timeline-item .timeline-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    margin-top: 6px;
+    flex-shrink: 0;
+}
+
+.timeline-item:hover {
+    transform: translateY(-4px);
+    background: rgba(255,255,255,0.01);
+}
+
+.timeline-item.active {
+    background: linear-gradient(90deg, rgba(56,189,248,0.06), rgba(192,132,252,0.04));
+    box-shadow: 0 8px 30px rgba(12,20,30,0.6), 0 0 30px rgba(56,189,248,0.08);
+}
+
+.timeline-details {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    gap: 1.25rem;
+    align-items: center;
+    text-align: right;
+}
+
+.timeline-item.active .timeline-details {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 1rem;
+}
+
+.timeline-img {
+    width: 200px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+}
+
+/* --- UTILITY CLASSES --- */
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
