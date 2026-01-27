@@ -26,6 +26,28 @@ const topics = [
         date: "23/ENE/2026 8:00 AM",
         icon: "ph-plug",
         link: "topics/topic-2.html"
+    },
+    {
+        id: 3,
+        title: "Conceptos Básicos de la Electrónica",
+        description: "Aprenderás desde cero a construir circuitos funcionales, comprender componentes esenciales y aplicar tus conocimientos en un proyecto práctico real.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "23/ENE/2026 7:00 AM",
+        icon: "ph-circuitry",
+        link: "topics/topic-3.html"
+    },
+        {
+        id: 4,
+        title: "Ley de Ohm y Análisis de Circuitos",
+        description: "Aprenderás la ley fundamental para entender circuitos electrónicos y cómo resolver ejercicios.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "26/ENE/2026 7:00 AM",
+        icon: "ph-resistor",
+        link: "topics/topic-4.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
