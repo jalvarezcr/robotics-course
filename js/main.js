@@ -48,6 +48,17 @@ const topics = [
         date: "26/ENE/2026 7:00 AM",
         icon: "ph-resistor",
         link: "topics/topic-4.html"
+    },
+    {
+        id: 5,
+        title: "Prácticas de Circuitos Simples",
+        description: "Aprende los fundamentos de la electrónica mediante prácticas sencillas y efectivas.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "29/ENE/2026 7:00 AM",
+        icon: "ph-resistor",
+        link: "topics/topic-5.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
