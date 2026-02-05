@@ -7,7 +7,7 @@
 const topics = [
     {
         id: 1,
-        title: "Introducción a la Robótica",
+        title: "1. Introducción a la Robótica",
         description: "Conceptos básicos de robótica, historia y aplicaciones modernas. Componentes principales y tipos de robots.",
         category: "clase",
         level: "Básico",
@@ -18,7 +18,7 @@ const topics = [
     },
     {
         id: 2,
-        title: "Conceptos Básicos de la Electricidad",
+        title: "2. Conceptos Básicos de la Electricidad",
         description: "Conocer los fundamentos de electricidad necesarios para entender el funcionamiento de los robots.",
         category: "clase",
         level: "Básico",
@@ -29,7 +29,7 @@ const topics = [
     },
     {
         id: 3,
-        title: "Conceptos Básicos de la Electrónica",
+        title: "3. Conceptos Básicos de la Electrónica",
         description: "Aprenderás desde cero a construir circuitos funcionales, comprender componentes esenciales y aplicar tus conocimientos en un proyecto práctico real.",
         category: "clase",
         level: "Básico",
@@ -40,7 +40,7 @@ const topics = [
     },
         {
         id: 4,
-        title: "Ley de Ohm y Análisis de Circuitos",
+        title: "4. Ley de Ohm y Análisis de Circuitos",
         description: "Aprenderás la ley fundamental para entender circuitos electrónicos y cómo resolver ejercicios.",
         category: "clase",
         level: "Básico",
@@ -51,7 +51,7 @@ const topics = [
     },
     {
         id: 5,
-        title: "Prácticas de Circuitos Simples",
+        title: "5. Prácticas de Circuitos Simples",
         description: "Aprende los fundamentos de la electrónica mediante prácticas sencillas y efectivas.",
         category: "clase",
         level: "Básico",
@@ -59,6 +59,17 @@ const topics = [
         date: "29/ENE/2026 7:00 AM",
         icon: "ph-resistor",
         link: "topics/topic-5.html"
+    },
+    {
+        id: 6,
+        title: "6. Componentes Electrónicos",
+        description: "Explora los diferentes componentes electrónicos y su funcionamiento dentro de los circuitos.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "03/FEB/2026 7:00 AM",
+        icon: "ph-resistor",
+        link: "topics/topic-6.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
