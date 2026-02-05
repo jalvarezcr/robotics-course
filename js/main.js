@@ -22,7 +22,7 @@ const topics = [
         description: "Conocer los fundamentos de electricidad necesarios para entender el funcionamiento de los robots.",
         category: "clase",
         level: "Básico",
-        color: "green",
+        color: "blue",
         date: "23/ENE/2026 8:00 AM",
         icon: "ph-plug",
         link: "topics/topic-2.html"
@@ -33,7 +33,7 @@ const topics = [
         description: "Aprenderás desde cero a construir circuitos funcionales, comprender componentes esenciales y aplicar tus conocimientos en un proyecto práctico real.",
         category: "clase",
         level: "Básico",
-        color: "green",
+        color: "blue",
         date: "23/ENE/2026 7:00 AM",
         icon: "ph-circuitry",
         link: "topics/topic-3.html"
@@ -44,20 +44,20 @@ const topics = [
         description: "Aprenderás la ley fundamental para entender circuitos electrónicos y cómo resolver ejercicios.",
         category: "clase",
         level: "Básico",
-        color: "green",
+        color: "blue",
         date: "26/ENE/2026 7:00 AM",
-        icon: "ph-resistor",
+        icon: "ph-arrow-circle-right",
         link: "topics/topic-4.html"
     },
     {
         id: 5,
         title: "5. Prácticas de Circuitos Simples",
         description: "Aprende los fundamentos de la electrónica mediante prácticas sencillas y efectivas.",
-        category: "clase",
+        category: "practica",
         level: "Básico",
-        color: "green",
+        color: "blue",
         date: "29/ENE/2026 7:00 AM",
-        icon: "ph-resistor",
+        icon: "ph-bug",
         link: "topics/topic-5.html"
     },
     {
@@ -66,10 +66,21 @@ const topics = [
         description: "Explora los diferentes componentes electrónicos y su funcionamiento dentro de los circuitos.",
         category: "clase",
         level: "Básico",
-        color: "green",
+        color: "blue",
         date: "03/FEB/2026 7:00 AM",
-        icon: "ph-resistor",
+        icon: "ph-circuitry",
         link: "topics/topic-6.html"
+    },
+    {
+        id: 7,
+        title: "7. Ejercicio Práctico: Sistema de Control de Puerta Automática con Seguridad Visual",
+        description: "Desarrolla un sistema de control para una puerta automática que utilice sensores visuales para garantizar la seguridad al abrir y cerrar.",
+        category: "practica",
+        level: "Básico",
+        color: "green",
+        date: "05/FEB/2026 7:00 AM",
+        icon: "ph-bug",
+        link: "topics/topic-7.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
