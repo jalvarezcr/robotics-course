@@ -81,6 +81,17 @@ const topics = [
         date: "05/FEB/2026 7:00 AM",
         icon: "ph-bug",
         link: "topics/topic-7.html"
+    },
+    {
+        id: 8,
+        title: "8. ¿Cómo idear un Robot?",
+        description: "Aprenderás a conceptualizar y diseñar un robot desde la idea inicial hasta su implementación práctica.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "24/FEB/2026 7:00 AM",
+        icon: "ph-rocket-launcher",
+        link: "topics/topic-8.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
