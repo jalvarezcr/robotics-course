@@ -92,6 +92,17 @@ const topics = [
         date: "24/FEB/2026 7:00 AM",
         icon: "ph-rocket-launcher",
         link: "topics/topic-8.html"
+    },
+    {
+        id: 9,
+        title: "9. Anatomía de un Robot",
+        description: "Aprenderás sobre cómo identificar y comprender las partes fundamentales de un robot, desde su estructura hasta sus sistemas de control y sensores.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "26/FEB/2026 7:00 AM",
+        icon: "ph-rocket-launcher",
+        link: "topics/topic-9.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
