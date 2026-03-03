@@ -103,6 +103,17 @@ const topics = [
         date: "26/FEB/2026 7:00 AM",
         icon: "ph-rocket-launcher",
         link: "topics/topic-9.html"
+    },
+    {
+        id: 10,
+        title: "10. Arduino: El Cerebro de tu Robot",
+        description: "Aprenderás acerca de la importancia de Arduino en la robótica y tus primeros pasos para programarlo.",
+        category: "clase",
+        level: "Básico",
+        color: "green",
+        date: "26/FEB/2026 7:00 AM",
+        icon: "ph-circuitry",
+        link: "topics/topic-10.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
