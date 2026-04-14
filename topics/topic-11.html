@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - Examen de Electrónica y Robótica">
+    <meta name="keywords" content="Arduino, Robótica, Electrónica, Examen, Resistencias, Diodos, Transistores, LEDs, Motores">
+    <title>RoboLab - Examen: Electrónica y Robótica</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Highlight.js -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+    <script>hljs.highlightAll();</script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="mb-12">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                        EXAMEN
+                    </span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        NIVEL BACHILLERATO
+                    </span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1 ml-auto">
+                        <i class="ph ph-timer"></i> 33 Preguntas
+                    </span>
+                </div>
+
+                <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    Examen: <span class="text-gradient">Electrónica y Robótica</span>
+                </h1>
+
+                <!-- Exam Meta -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 glass-panel rounded-2xl mb-8">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Preguntas</span>
+                        <span class="text-slate-200">33 Total</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Tipo</span>
+                        <span class="text-slate-200">Opción Múltiple</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Nivel</span>
+                        <span class="text-slate-200">Bachillerato</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Temas</span>
+                        <span class="text-slate-200">Electrónica / Robótica</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Exam Container -->
+            <div id="exam-container">
+
+                <!-- Start Screen -->
+                <div id="exam-start" class="glass-panel p-10 rounded-3xl text-center relative overflow-hidden">
+                    <div class="absolute -top-24 -right-24 w-48 h-48 bg-neon-blue/10 blur-[100px]"></div>
+                    <div class="relative z-10">
+                        <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-cyan-500/20">
+                            <i class="ph ph-exam text-white text-4xl"></i>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white mb-4 font-display">¿Listo para el Examen?</h2>
+                        <p class="text-slate-400 mb-3 max-w-lg mx-auto">Pon a prueba tus conocimientos en electrónica básica y robótica. Responde las 33 preguntas de opción múltiple y recibe retroalimentación inmediata.</p>
+                        <div class="flex flex-wrap justify-center gap-3 mb-8">
+                            <span class="px-3 py-1.5 rounded-lg bg-orange-500/10 text-orange-400 text-xs font-bold border border-orange-500/20">Resistencias</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-red-500/10 text-red-400 text-xs font-bold border border-red-500/20">Diodos & LEDs</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-blue-500/10 text-blue-400 text-xs font-bold border border-blue-500/20">Transistores</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-green-500/10 text-green-400 text-xs font-bold border border-green-500/20">Sensores</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-purple-500/10 text-purple-400 text-xs font-bold border border-purple-500/20">Motores</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 text-xs font-bold border border-cyan-500/20">Robótica</span>
+                            <span class="px-3 py-1.5 rounded-lg bg-yellow-500/10 text-yellow-400 text-xs font-bold border border-yellow-500/20">Leyes Asimov</span>
+                        </div>
+                        <button onclick="startExam()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-bold text-lg hover:scale-[1.05] transition-transform shadow-lg shadow-blue-600/30">
+                            <i class="ph ph-play mr-2"></i> Comenzar Examen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Question Screen -->
+                <div id="exam-question" class="hidden">
+                    <!-- Score Bar -->
+                    <div class="glass-panel p-4 rounded-2xl mb-6 flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex items-center gap-4">
+                            <div class="flex items-center gap-2">
+                                <i class="ph ph-hash text-slate-500"></i>
+                                <span class="text-white font-bold text-sm">Pregunta <span id="q-current">1</span>/33</span>
+                            </div>
+                            <div class="h-5 w-px bg-white/10"></div>
+                            <div class="flex items-center gap-2">
+                                <i class="ph ph-check-circle text-green-400"></i>
+                                <span class="text-green-400 font-bold text-sm" id="score-correct">0</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <i class="ph ph-x-circle text-red-400"></i>
+                                <span class="text-red-400 font-bold text-sm" id="score-incorrect">0</span>
+                            </div>
+                        </div>
+                        <div class="flex-1 min-w-[200px]">
+                            <div class="w-full h-2 bg-white/5 rounded-full overflow-hidden">
+                                <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-500 to-blue-600 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div class="glass-panel p-8 rounded-3xl relative overflow-hidden mb-6">
+                        <div class="absolute -top-20 -left-20 w-40 h-40 bg-blue-500/5 blur-[80px]"></div>
+                        <div class="relative z-10">
+                            <span id="q-category" class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest bg-blue-500/10 text-blue-400 border border-blue-500/20 mb-4 inline-block"></span>
+                            <h3 id="q-text" class="text-xl md:text-2xl font-bold text-white mb-8 leading-relaxed"></h3>
+
+                            <div id="q-options" class="grid grid-cols-1 gap-3"></div>
+                        </div>
+                    </div>
+
+                    <!-- Feedback -->
+                    <div id="q-feedback" class="hidden glass-panel p-6 rounded-2xl mb-6 border-2 transition-all">
+                        <div class="flex items-start gap-4">
+                            <i id="fb-icon" class="text-3xl mt-1"></i>
+                            <div>
+                                <h4 id="fb-title" class="font-bold text-lg mb-1"></h4>
+                                <p id="fb-text" class="text-sm text-slate-300"></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Next Button -->
+                    <div id="q-next-wrap" class="hidden text-right">
+                        <button onclick="nextQuestion()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-bold hover:scale-[1.05] transition-transform">
+                            Siguiente <i class="ph ph-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Screen -->
+                <div id="exam-results" class="hidden">
+                    <div class="glass-panel p-10 rounded-3xl text-center relative overflow-hidden mb-8">
+                        <div class="absolute -top-24 -left-24 w-48 h-48 bg-neon-blue/10 blur-[100px]"></div>
+                        <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-purple-500/10 blur-[100px]"></div>
+                        <div class="relative z-10">
+                            <div id="result-icon" class="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6"></div>
+                            <h2 id="result-title" class="text-3xl md:text-4xl font-bold text-white mb-2 font-display"></h2>
+                            <p id="result-subtitle" class="text-slate-400 mb-8"></p>
+
+                            <div class="grid grid-cols-3 gap-4 max-w-md mx-auto mb-8">
+                                <div class="glass-panel p-4 rounded-xl">
+                                    <div class="text-2xl font-bold text-green-400" id="r-correct">0</div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wider">Correctas</span>
+                                </div>
+                                <div class="glass-panel p-4 rounded-xl">
+                                    <div class="text-2xl font-bold text-red-400" id="r-incorrect">0</div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wider">Incorrectas</span>
+                                </div>
+                                <div class="glass-panel p-4 rounded-xl">
+                                    <div class="text-2xl font-bold text-cyan-400" id="r-percent">0%</div>
+                                    <span class="text-xs text-slate-500 uppercase tracking-wider">Calificación</span>
+                                </div>
+                            </div>
+
+                            <!-- Score Bar Visual -->
+                            <div class="w-full max-w-md mx-auto mb-8">
+                                <div class="w-full h-4 bg-white/5 rounded-full overflow-hidden">
+                                    <div id="result-bar" class="h-full rounded-full transition-all duration-1000 ease-out" style="width:0%"></div>
+                                </div>
+                            </div>
+
+                            <button onclick="restartExam()" class="px-8 py-4 rounded-2xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-bold text-lg hover:scale-[1.05] transition-transform shadow-lg shadow-blue-600/30">
+                                <i class="ph ph-arrow-counter-clockwise mr-2"></i> Intentar de Nuevo
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Review -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-3">
+                            <i class="ph ph-list-checks text-cyan-400"></i> Revisión de Respuestas
+                        </h3>
+                        <div id="review-list" class="space-y-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Conclusión -->
+            <div class="mt-20 p-10 glass-panel text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-neon-blue via-purple-500 to-neon-green"></div>
+                <i class="ph ph-exam text-5xl text-blue-500/20 mb-6 block mx-auto"></i>
+                <p class="text-lg md:text-xl text-slate-200 italic leading-relaxed max-w-2xl mx-auto mb-8 font-serif">
+                    "El conocimiento en electrónica y robótica es la base para construir el futuro. Cada componente que domines te acerca a crear soluciones increíbles."
+                </p>
+                <div class="flex flex-col items-center">
+                    <span class="text-sm text-slate-500 uppercase tracking-widest font-bold">Examen — Electrónica y Robótica</span>
+                    <span class="text-xs text-slate-600">v1.0 - RoboLab Academy</span>
+                </div>
+            </div>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center mt-20 pt-12 border-t border-white/10">
+                <a href="../index.html" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-white/5 text-slate-400 hover:text-white transition border border-white/5">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>Volver al Catálogo</span>
+                </a>
+                <a href="topic-2.html" class="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-700 text-white font-bold hover:scale-[1.05] transition-transform">
+                    <span>Siguiente Tema</span>
+                    <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería y preparatoria.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/components.js"></script>
+    <script src="../js/main.js"></script>
+
+    <!-- Exam Logic -->
+    <script>
+    const examQuestions = [
+        // --- RESISTENCIAS ---
+        {
+            category: "Resistencias",
+            question: "¿Cuál es la unidad de medida de la resistencia eléctrica?",
+            options: ["Voltio (V)", "Ohmio (Ω)", "Amperio (A)", "Watt (W)"],
+            answer: 1,
+            explanation: "La resistencia eléctrica se mide en Ohmios (Ω), en honor a Georg Simon Ohm."
+        },
+        {
+            category: "Resistencias",
+            question: "¿Qué indica el código de colores en una resistencia?",
+            options: ["Su temperatura máxima", "Su valor en ohmios y tolerancia", "Su voltaje máximo", "Su corriente máxima"],
+            answer: 1,
+            explanation: "Las bandas de colores en una resistencia codifican su valor nominal en ohmios y su porcentaje de tolerancia."
+        },
+        {
+            category: "Resistencias",
+            question: "Según la Ley de Ohm, si V = 12V e I = 2A, ¿cuánto vale R?",
+            options: ["24 Ω", "6 Ω", "14 Ω", "10 Ω"],
+            answer: 1,
+            explanation: "La Ley de Ohm establece R = V / I. Entonces R = 12V / 2A = 6 Ω."
+        },
+        {
+            category: "Resistencias",
+            question: "¿Qué sucede con la resistencia total al conectar resistencias en serie?",
+            options: ["Disminuye", "Se mantiene igual", "Aumenta (se suman)", "Se divide entre el número de resistencias"],
+            answer: 2,
+            explanation: "En serie, la resistencia total es la suma de todas: Rt = R1 + R2 + R3 + ..."
+        },
+        {
+            category: "Resistencias",
+            question: "Un potenciómetro es una resistencia que:",
+            options: ["Varía con la temperatura", "Se puede ajustar manualmente", "Solo permite el paso de corriente en un sentido", "Almacena energía"],
+            answer: 1,
+            explanation: "Un potenciómetro es una resistencia variable que se ajusta girando un eje o deslizando un cursor."
+        },
+        // --- DIODOS ---
+        {
+            category: "Diodos",
+            question: "¿Cuál es la función principal de un diodo?",
+            options: ["Amplificar señales", "Permitir el paso de corriente en un solo sentido", "Almacenar carga eléctrica", "Medir voltaje"],
+            answer: 1,
+            explanation: "El diodo es un semiconductor que permite el flujo de corriente en una dirección (polarización directa) y lo bloquea en la otra."
+        },
+        {
+            category: "Diodos",
+            question: "¿Cómo se llaman las terminales de un diodo?",
+            options: ["Base y Colector", "Ánodo y Cátodo", "Positivo y Negativo", "Gate y Source"],
+            answer: 1,
+            explanation: "Las terminales del diodo se llaman Ánodo (+) y Cátodo (-). La corriente fluye del ánodo al cátodo."
+        },
+        {
+            category: "Diodos",
+            question: "¿Cuál es el voltaje de caída típico de un diodo de silicio en polarización directa?",
+            options: ["0.3 V", "0.7 V", "1.5 V", "5.0 V"],
+            answer: 1,
+            explanation: "Un diodo de silicio tiene una caída de voltaje típica de aproximadamente 0.7V cuando conduce."
+        },
+        {
+            category: "Diodos",
+            question: "¿En qué dirección permite pasar la corriente un diodo cuando está polarizado directamente?",
+            options: ["Del Cátodo al Ánodo", "Del Ánodo al Cátodo", "En ambas direcciones", "No permite el paso de corriente"],
+            answer: 1,
+            explanation: "En polarización directa, la corriente fluye del Ánodo (+) al Cátodo (-), que es la dirección permitida por el diodo."
+        },
+        // --- LEDs ---
+        {
+            category: "LEDs",
+            question: "¿Qué significan las siglas LED?",
+            options: ["Light Emitting Diode", "Low Energy Device", "Linear Electronic Display", "Laser Emission Detector"],
+            answer: 0,
+            explanation: "LED significa Light Emitting Diode (Diodo Emisor de Luz)."
+        },
+        {
+            category: "LEDs",
+            question: "¿Por qué se conecta una resistencia en serie con un LED?",
+            options: ["Para que brille más", "Para limitar la corriente y evitar que se queme", "Para cambiar el color de la luz", "Para almacenar energía"],
+            answer: 1,
+            explanation: "La resistencia limita la corriente que pasa por el LED, protegiéndolo de sobrecorriente que lo dañaría."
+        },
+        {
+            category: "LEDs",
+            question: "¿Cuál es la corriente de operación típica de un LED estándar de 5mm?",
+            options: ["200 mA", "1 A", "20 mA", "500 mA"],
+            answer: 2,
+            explanation: "La mayoría de LEDs estándar de 5mm operan a aproximadamente 20 mA (miliamperios)."
+        },
+        // --- TRANSISTORES ---
+        {
+            category: "Transistores",
+            question: "¿Cuáles son las tres terminales de un transistor PNP?",
+            options: ["Ánodo, Cátodo, Gate", "Base, Colector, Emisor", "Source, Drain, Gate", "Entrada, Salida, Tierra"],
+            answer: 1,
+            explanation: "Un transistor PNP (Bipolar Junction Transistor) tiene tres terminales: Base, Colector y Emisor."
+        },
+        {
+            category: "Transistores",
+            question: "¿Cuál es la función principal de un transistor en un circuito?",
+            options: ["Solo almacenar energía", "Amplificar señales o funcionar como interruptor electrónico", "Medir temperatura", "Convertir AC a DC"],
+            answer: 1,
+            explanation: "Los transistores se usan como amplificadores de señal o como interruptores electrónicos controlados por corriente o voltaje."
+        },
+        {
+            category: "Transistores",
+            question: "¿En qué se diferencia un transistor NPN de un PNP?",
+            options: ["No hay diferencia, son idénticos", "En el NPN la corriente entra por la Base hacia el Emisor; en el PNP sale del Emisor hacia la Base", "El NPN usa voltaje AC y el PNP usa DC", "El NPN tiene 4 terminales y el PNP tiene 3"],
+            answer: 1,
+            explanation: "En un NPN la corriente fluye del Colector al Emisor cuando se activa la Base. En un PNP fluye del Emisor al Colector. Son complementarios en su polaridad de operación."
+        },
+        {
+            category: "Transistores",
+            question: "En un transistor NPN, ¿qué condición activa al transistor (modo saturación)?",
+            options: ["Corriente positiva en el Emisor", "Corriente suficiente en la Base", "Voltaje negativo en el Colector", "Resistencia en el Gate"],
+            answer: 1,
+            explanation: "En un transistor NPN, se necesita una corriente de Base suficiente para saturar el transistor y permitir el flujo Colector-Emisor."
+        },
+        // --- LDR / SENSORES ---
+        {
+            category: "Sensores",
+            question: "¿Qué es un LDR (Light Dependent Resistor)?",
+            options: ["Un LED de alta potencia", "Una resistencia que varía su valor según la luz que recibe", "Un tipo de capacitor", "Un motor de bajo consumo"],
+            answer: 1,
+            explanation: "El LDR es un sensor cuya resistencia disminuye cuando aumenta la luz incidente y viceversa."
+        },
+        {
+            category: "Sensores",
+            question: "¿Qué sucede con la resistencia de un LDR cuando aumenta la luz?",
+            options: ["Aumenta", "Disminuye", "Se mantiene igual", "Se vuelve infinita"],
+            answer: 1,
+            explanation: "A mayor intensidad de luz, menor es la resistencia del LDR. En oscuridad su resistencia puede llegar a megaohmios."
+        },
+        {
+            category: "Sensores",
+            question: "¿Qué tipo de sensor mide distancia mediante ondas de sonido?",
+            options: ["Sensor infrarrojo", "Sensor ultrasónico", "Fotorresistencia", "Termistor"],
+            answer: 1,
+            explanation: "El sensor ultrasónico emite pulsos de sonido y mide el tiempo que tarda el eco en regresar para calcular la distancia."
+        },
+        {
+            category: "Sensores",
+            question: "Un termistor NTC es un sensor que:",
+            options: ["Aumenta su resistencia con la temperatura", "Disminuye su resistencia al aumentar la temperatura", "Mide la luz ambiental", "Genera electricidad con el calor"],
+            answer: 1,
+            explanation: "NTC (Negative Temperature Coefficient): su resistencia disminuye cuando la temperatura sube."
+        },
+        // --- CAPACITORES ---
+        {
+            category: "Capacitores",
+            question: "¿Cuál es la función principal de un capacitor?",
+            options: ["Generar luz", "Almacenar carga eléctrica temporalmente", "Convertir corriente AC a DC", "Amplificar señales"],
+            answer: 1,
+            explanation: "Un capacitor almacena energía en forma de campo eléctrico entre sus placas conductoras."
+        },
+        {
+            category: "Capacitores",
+            question: "¿En qué unidad se mide la capacitancia?",
+            options: ["Henrios (H)", "Ohmios (Ω)", "Faradios (F)", "Coulombs (C)"],
+            answer: 2,
+            explanation: "La capacitancia se mide en Faradios (F). En la práctica se usan microfaradios (µF) y picofaradios (pF)."
+        },
+        // --- MOTORES ---
+        {
+            category: "Motores",
+            question: "¿Qué tipo de motor permite controlar el ángulo exacto de rotación?",
+            options: ["Motor DC convencional", "Motor paso a paso (Stepper)", "Motor de corriente alterna", "Motor universal"],
+            answer: 1,
+            explanation: "El motor paso a paso gira en incrementos precisos (pasos), permitiendo un control exacto del ángulo de rotación."
+        },
+        {
+            category: "Motores",
+            question: "¿Qué componente se usa comúnmente para controlar la posición angular de un motor en robótica?",
+            options: ["Relé", "Servomotor", "Transformador", "Fusible"],
+            answer: 1,
+            explanation: "El servomotor incluye un sistema de control que permite posicionar su eje en un ángulo específico (generalmente 0° a 180°)."
+        },
+        {
+            category: "Motores",
+            question: "¿Qué técnica se utiliza para controlar la velocidad de un motor DC con Arduino?",
+            options: ["Modulación FM", "PWM (Modulación por Ancho de Pulso)", "Regulación de frecuencia", "Inversión de polaridad"],
+            answer: 1,
+            explanation: "PWM (Pulse Width Modulation) varía el ciclo de trabajo de la señal para controlar la velocidad promedio del motor."
+        },
+        // --- CIRCUITOS GENERALES ---
+        {
+            category: "Circuitos",
+            question: "¿Cuál es la diferencia entre corriente directa (DC) y corriente alterna (AC)?",
+            options: ["DC es más peligrosa que AC", "En DC la corriente fluye en un solo sentido; en AC cambia de dirección periódicamente", "AC solo se usa en baterías", "No existe diferencia real"],
+            answer: 1,
+            explanation: "En DC la corriente fluye constantemente en una dirección. En AC, la dirección se invierte periódicamente (ej. 60 Hz)."
+        },
+        {
+            category: "Circuitos",
+            question: "¿Qué instrumento se utiliza para medir voltaje, corriente y resistencia?",
+            options: ["Osciloscopio", "Multímetro", "Generador de funciones", "Fuente de poder"],
+            answer: 1,
+            explanation: "El multímetro (o tester) es el instrumento básico que puede medir voltaje (V), corriente (A) y resistencia (Ω)."
+        },
+        // --- ROBÓTICA ---
+        {
+            category: "Robótica",
+            question: "¿Qué placa de desarrollo es la más utilizada en proyectos educativos de robótica?",
+            options: ["Raspberry Pi Pico", "Arduino UNO", "ESP32", "FPGA"],
+            answer: 1,
+            explanation: "Arduino UNO es la placa más popular en educación por su simplicidad, bajo costo y amplia documentación."
+        },
+        {
+            category: "Robótica",
+            question: "¿Cuáles son los tres componentes fundamentales de un robot?",
+            options: ["Pantalla, teclado y mouse", "Sensores, controlador y actuadores", "WiFi, Bluetooth y USB", "Cámara, micrófono y bocina"],
+            answer: 1,
+            explanation: "Un robot básico necesita sensores (percepción), un controlador (procesamiento/decisión) y actuadores (acción física)."
+        },
+        {
+            category: "Robótica",
+            question: "¿Qué componente protege un circuito contra sobrecorriente?",
+            options: ["Capacitor", "Transistor", "Fusible", "Inductor"],
+            answer: 2,
+            explanation: "El fusible se funde e interrumpe el circuito cuando la corriente excede un valor seguro, protegiendo los demás componentes."
+        },
+        // --- LEYES DE LA ROBÓTICA ---
+        {
+            category: "Leyes de la Robótica",
+            question: "¿Qué establece la Primera Ley de la Robótica de Isaac Asimov?",
+            options: [
+                "Un robot debe proteger su propia existencia",
+                "Un robot no puede dañar a un ser humano ni permitir que sufra daño por su inacción",
+                "Un robot debe obedecer todas las órdenes humanas sin excepción",
+                "Un robot debe ser más inteligente que los humanos"
+            ],
+            answer: 1,
+            explanation: "La Primera Ley establece que un robot no puede dañar a un ser humano, ni por acción ni por omisión poner en peligro a un humano. Es la ley de mayor jerarquía."
+        },
+        {
+            category: "Leyes de la Robótica",
+            question: "Según la Segunda Ley de Asimov, ¿cuándo puede un robot desobedecer una orden humana?",
+            options: [
+                "Nunca, siempre debe obedecer",
+                "Cuando la orden contradiga la Primera Ley (dañar a un humano)",
+                "Cuando el robot considere que la orden es incorrecta",
+                "Cuando la orden sea dada por un niño"
+            ],
+            answer: 1,
+            explanation: "La Segunda Ley dice que un robot debe obedecer las órdenes humanas, EXCEPTO cuando entren en conflicto con la Primera Ley. La protección humana siempre tiene prioridad."
+        },
+        {
+            category: "Leyes de la Robótica",
+            question: "¿Qué dice la Tercera Ley de la Robótica de Asimov?",
+            options: [
+                "Un robot debe ser capaz de aprender por sí mismo",
+                "Un robot debe compartir su conocimiento con otros robots",
+                "Un robot debe proteger su propia existencia, siempre que ello no contradiga las leyes anteriores",
+                "Un robot no puede ser reprogramado por humanos"
+            ],
+            answer: 2,
+            explanation: "La Tercera Ley indica que un robot debe proteger su propia existencia, pero solo si eso no viola la Primera ni la Segunda Ley. Es la de menor jerarquía."
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let incorrect = 0;
+    let answered = false;
+    let userAnswers = [];
+
+    function startExam() {
+        currentQuestion = 0;
+        score = 0;
+        incorrect = 0;
+        answered = false;
+        userAnswers = [];
+        document.getElementById('exam-start').classList.add('hidden');
+        document.getElementById('exam-question').classList.remove('hidden');
+        document.getElementById('exam-results').classList.add('hidden');
+        renderQuestion();
+    }
+
+    function renderQuestion() {
+        answered = false;
+        const q = examQuestions[currentQuestion];
+        document.getElementById('q-current').textContent = currentQuestion + 1;
+        document.getElementById('score-correct').textContent = score;
+        document.getElementById('score-incorrect').textContent = incorrect;
+        document.getElementById('progress-bar').style.width = ((currentQuestion / examQuestions.length) * 100) + '%';
+        document.getElementById('q-category').textContent = q.category;
+        document.getElementById('q-text').textContent = q.question;
+        document.getElementById('q-feedback').classList.add('hidden');
+        document.getElementById('q-next-wrap').classList.add('hidden');
+
+        const optionsContainer = document.getElementById('q-options');
+        optionsContainer.innerHTML = '';
+
+        const letters = ['A', 'B', 'C', 'D'];
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'flex items-center gap-4 p-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all text-left group';
+            btn.innerHTML = `
+                <span class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-sm font-bold text-slate-400 group-hover:text-white group-hover:border-white/20 transition-all shrink-0">${letters[i]}</span>
+                <span class="text-slate-300 text-sm group-hover:text-white transition-colors">${opt}</span>
+            `;
+            btn.onclick = () => selectAnswer(i, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectAnswer(index, btn) {
+        if (answered) return;
+        answered = true;
+
+        const q = examQuestions[currentQuestion];
+        const isCorrect = index === q.answer;
+        const allBtns = document.querySelectorAll('#q-options button');
+        const letters = ['A', 'B', 'C', 'D'];
+
+        userAnswers.push({ questionIndex: currentQuestion, selected: index, correct: isCorrect });
+
+        allBtns.forEach((b, i) => {
+            b.classList.remove('hover:bg-white/10', 'hover:border-white/20');
+            b.style.cursor = 'default';
+            if (i === q.answer) {
+                b.className = 'flex items-center gap-4 p-4 rounded-xl border-2 border-green-500/50 bg-green-500/10 text-left group';
+                b.querySelector('span:first-child').className = 'w-9 h-9 rounded-lg bg-green-500/20 border border-green-500/30 flex items-center justify-center text-sm font-bold text-green-400 shrink-0';
+                b.querySelector('span:last-child').className = 'text-green-300 text-sm font-medium';
+            } else if (i === index && !isCorrect) {
+                b.className = 'flex items-center gap-4 p-4 rounded-xl border-2 border-red-500/50 bg-red-500/10 text-left group';
+                b.querySelector('span:first-child').className = 'w-9 h-9 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center text-sm font-bold text-red-400 shrink-0';
+                b.querySelector('span:last-child').className = 'text-red-300 text-sm line-through';
+            } else {
+                b.className = 'flex items-center gap-4 p-4 rounded-xl border border-white/5 bg-white/2 text-left group opacity-40';
+            }
+        });
+
+        const fb = document.getElementById('q-feedback');
+        const fbIcon = document.getElementById('fb-icon');
+        const fbTitle = document.getElementById('fb-title');
+        const fbText = document.getElementById('fb-text');
+
+        fb.classList.remove('hidden', 'border-green-500/30', 'border-red-500/30', 'bg-green-500/5', 'bg-red-500/5');
+
+        if (isCorrect) {
+            score++;
+            fb.classList.add('border-green-500/30', 'bg-green-500/5');
+            fbIcon.className = 'ph ph-check-circle text-3xl mt-1 text-green-400';
+            fbTitle.className = 'font-bold text-lg mb-1 text-green-400';
+            fbTitle.textContent = '¡Correcto!';
+        } else {
+            incorrect++;
+            fb.classList.add('border-red-500/30', 'bg-red-500/5');
+            fbIcon.className = 'ph ph-x-circle text-3xl mt-1 text-red-400';
+            fbTitle.className = 'font-bold text-lg mb-1 text-red-400';
+            fbTitle.textContent = 'Incorrecto';
+        }
+
+        fbText.textContent = q.explanation;
+        fb.classList.remove('hidden');
+
+        document.getElementById('score-correct').textContent = score;
+        document.getElementById('score-incorrect').textContent = incorrect;
+
+        document.getElementById('q-next-wrap').classList.remove('hidden');
+
+        fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function nextQuestion() {
+        currentQuestion++;
+        if (currentQuestion >= examQuestions.length) {
+            showResults();
+        } else {
+            renderQuestion();
+            document.getElementById('q-text').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    }
+
+    function showResults() {
+        document.getElementById('exam-question').classList.add('hidden');
+        document.getElementById('exam-results').classList.remove('hidden');
+
+        const percent = Math.round((score / examQuestions.length) * 100);
+        document.getElementById('r-correct').textContent = score;
+        document.getElementById('r-incorrect').textContent = incorrect;
+        document.getElementById('r-percent').textContent = percent + '%';
+
+        const icon = document.getElementById('result-icon');
+        const title = document.getElementById('result-title');
+        const subtitle = document.getElementById('result-subtitle');
+        const bar = document.getElementById('result-bar');
+
+        if (percent >= 90) {
+            icon.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 bg-green-500/20 border-2 border-green-500/30';
+            icon.innerHTML = '<i class="ph ph-trophy text-green-400 text-5xl"></i>';
+            title.textContent = '¡Excelente!';
+            subtitle.textContent = 'Dominas los temas de electrónica y robótica. ¡Sigue así!';
+            bar.className = 'h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-green-500 to-emerald-400';
+        } else if (percent >= 70) {
+            icon.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 bg-blue-500/20 border-2 border-blue-500/30';
+            icon.innerHTML = '<i class="ph ph-thumbs-up text-blue-400 text-5xl"></i>';
+            title.textContent = '¡Buen Trabajo!';
+            subtitle.textContent = 'Tienes una buena base. Repasa los temas donde fallaste.';
+            bar.className = 'h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-blue-500 to-cyan-400';
+        } else if (percent >= 50) {
+            icon.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 bg-yellow-500/20 border-2 border-yellow-500/30';
+            icon.innerHTML = '<i class="ph ph-warning text-yellow-400 text-5xl"></i>';
+            title.textContent = 'Puedes Mejorar';
+            subtitle.textContent = 'Necesitas repasar varios conceptos. ¡No te rindas!';
+            bar.className = 'h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-yellow-500 to-orange-400';
+        } else {
+            icon.className = 'w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 bg-red-500/20 border-2 border-red-500/30';
+            icon.innerHTML = '<i class="ph ph-books text-red-400 text-5xl"></i>';
+            title.textContent = 'A Estudiar';
+            subtitle.textContent = 'Es necesario repasar los fundamentos. Revisa el material y vuelve a intentarlo.';
+            bar.className = 'h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-red-500 to-pink-400';
+        }
+
+        setTimeout(() => { bar.style.width = percent + '%'; }, 100);
+
+        // Render review
+        const reviewList = document.getElementById('review-list');
+        reviewList.innerHTML = '';
+        const letters = ['A', 'B', 'C', 'D'];
+
+        userAnswers.forEach((ua, idx) => {
+            const q = examQuestions[ua.questionIndex];
+            const div = document.createElement('div');
+            div.className = `flex items-start gap-4 p-4 rounded-xl border ${ua.correct ? 'border-green-500/20 bg-green-500/5' : 'border-red-500/20 bg-red-500/5'}`;
+            div.innerHTML = `
+                <span class="w-8 h-8 rounded-lg ${ua.correct ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} flex items-center justify-center text-sm font-bold shrink-0">${idx + 1}</span>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm text-white font-medium mb-1">${q.question}</p>
+                    <p class="text-xs ${ua.correct ? 'text-green-400' : 'text-red-400'}">
+                        ${ua.correct ? '✓ Correcta' : '✗ Tu respuesta: ' + letters[ua.selected] + ') ' + q.options[ua.selected]}
+                        ${!ua.correct ? ' — Correcta: ' + letters[q.answer] + ') ' + q.options[q.answer] : ''}
+                    </p>
+                </div>
+            `;
+            reviewList.appendChild(div);
+        });
+
+        document.getElementById('exam-results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function restartExam() {
+        // Shuffle questions for variety
+        examQuestions.sort(() => Math.random() - 0.5);
+        startExam();
+        document.getElementById('exam-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    </script>
+</body>
+</html>

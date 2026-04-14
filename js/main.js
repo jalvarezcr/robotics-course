@@ -114,6 +114,17 @@ const topics = [
         date: "26/FEB/2026 7:00 AM",
         icon: "ph-circuitry",
         link: "topics/topic-10.html"
+    }, 
+    {
+        id: 11,
+        title: "11. Examen de Conocimientos.",
+        description: "Pon a prueba tus conocimientos en electrónica y robótica mediante un examen que abarca todos los temas vistos hasta ahora.",
+        category: "practica",
+        level: "Básico",
+        color: "green",
+        date: "14/ABR/2026 7:00 AM",
+        icon: "ph-bug",
+        link: "topics/topic-11.html"
     }
     // Más temas pueden ser añadidos aquí
 ];
