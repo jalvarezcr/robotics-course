@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - Control Inalámbrico RF 433 MHz con HT12E/HT12D y Puente H">
+    <meta name="keywords" content="Arduino, Robótica, Electrónica, RF 433MHz, HT12E, HT12D, Puente H, 2N2222">
+    <title>RoboLab - Clase 12: Control Inalámbrico RF 433 MHz</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .canvas-container {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #080C14;
+            border: 1px solid rgba(56,189,248,0.15);
+        }
+        .canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .pin-table td, .pin-table th {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+        }
+        .component-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .scroll-indicator {
+            animation: scrollHint 2s ease-in-out infinite;
+        }
+        @keyframes scrollHint {
+            0%, 100% { transform: translateX(0); opacity: 0.5; }
+            50% { transform: translateX(6px); opacity: 1; }
+        }
+        .glow-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, #c084fc, transparent);
+            border-radius: 1px;
+        }
+        /* Zoom / Pan canvas */
+        .canvas-container { cursor: grab; user-select: none; -webkit-user-select: none; }
+        .canvas-container.is-dragging { cursor: grabbing; }
+        .canvas-container canvas { touch-action: none; }
+        .canvas-toolbar {
+            position: absolute; top: 10px; right: 10px;
+            display: flex; align-items: center; gap: 4px;
+            background: rgba(11,15,25,0.85); backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            padding: 4px; z-index: 10;
+        }
+        .canvas-toolbar button {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            background: transparent; color: #94a3b8; border: none; border-radius: 6px;
+            cursor: pointer; font-size: 16px; transition: all 150ms;
+        }
+        .canvas-toolbar button:hover { background: rgba(56,189,248,0.15); color: #38bdf8; }
+        .canvas-zoom-level {
+            font-family: 'JetBrains Mono', monospace; font-size: 10px;
+            color: #64748b; padding: 0 8px; min-width: 40px; text-align: center;
+        }
+        .canvas-hint {
+            position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+            font-size: 10px; color: rgba(148,163,184,0.5);
+            background: rgba(11,15,25,0.7); padding: 4px 12px; border-radius: 6px;
+            pointer-events: none; transition: opacity 400ms; z-index: 10;
+        }
+    </style>
+</head>
+
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- ═══════════════════ HEADER ═══════════════════ -->
+            <div class="mb-12">
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">RF 433 MHz</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">COMUNICACIÓN INALÁMBRICA</span>
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-orange-500/10 text-orange-400 border border-orange-500/20">PUENTE H</span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1 ml-auto">
+                        <i class="ph ph-calendar"></i> Clase 12
+                    </span>
+                </div>
+
+                <h1 class="font-display text-4xl md:text-6xl font-bold text-white mb-6 leading-tight">
+                    Control Inalámbrico<br><span class="text-gradient">RF 433 MHz</span>
+                </h1>
+                <p class="text-lg text-slate-400 max-w-3xl mb-8">
+                    Sistema de control remoto usando codificador <strong class="text-white">HT12E</strong> / decodificador <strong class="text-white">HT12D</strong> con módulos RF de 433 MHz, control de LED y motor DC mediante Puente H con transistores 2N2222.
+                </p>
+
+                <!-- Lesson Meta -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 glass-panel rounded-2xl mb-12">
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Duración</span>
+                        <span class="text-slate-200">90 Minutos</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Nivel</span>
+                        <span class="text-slate-200">Intermedio</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Modalidad</span>
+                        <span class="text-slate-200">Teórico-Práctica</span>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Componentes</span>
+                        <span class="text-slate-200">17 tipos</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══════════════════ FUNCIONALIDADES ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-lightning text-neon-blue"></i> Funcionalidades del Sistema
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glass-card p-6 flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-xl bg-yellow-500/10 flex items-center justify-center mb-4 border border-yellow-500/20 text-yellow-400">
+                            <i class="ph ph-lightbulb text-3xl"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2 font-display">PB1 — LED</h4>
+                        <p class="text-xs text-slate-400">Enciende/apaga un LED remotamente vía RF</p>
+                        <span class="mt-3 component-badge bg-yellow-500/10 text-yellow-400 border border-yellow-500/20">D8 → Pin 10</span>
+                    </div>
+                    <div class="glass-card p-6 flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center mb-4 border border-green-500/20 text-green-400">
+                            <i class="ph ph-arrow-clockwise text-3xl"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2 font-display">PB2 — Motor FWD</h4>
+                        <p class="text-xs text-slate-400">Gira motor DC en sentido horario (Forward)</p>
+                        <span class="mt-3 component-badge bg-green-500/10 text-green-400 border border-green-500/20">D9 → Pin 11</span>
+                    </div>
+                    <div class="glass-card p-6 flex flex-col items-center text-center">
+                        <div class="w-14 h-14 rounded-xl bg-red-500/10 flex items-center justify-center mb-4 border border-red-500/20 text-red-400">
+                            <i class="ph ph-arrow-counter-clockwise text-3xl"></i>
+                        </div>
+                        <h4 class="font-bold text-white mb-2 font-display">PB3 — Motor REV</h4>
+                        <p class="text-xs text-slate-400">Gira motor DC en sentido antihorario (Reverse)</p>
+                        <span class="mt-3 component-badge bg-red-500/10 text-red-400 border border-red-500/20">D10 → Pin 12</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ LISTA DE COMPONENTES ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-package text-neon-purple"></i> Lista de Componentes
+                </h2>
+                <div class="overflow-x-auto rounded-2xl border border-white/5">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Cant.</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Componente</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">HT12E</td><td class="p-4 border-b border-white/5 text-slate-400">Codificador serial 12-bit (18 pines DIP)</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">HT12D</td><td class="p-4 border-b border-white/5 text-slate-400">Decodificador serial 12-bit (18 pines DIP)</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">FS1000A</td><td class="p-4 border-b border-white/5 text-slate-400">Módulo transmisor RF 433 MHz</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">MX-RM-5V</td><td class="p-4 border-b border-white/5 text-slate-400">Módulo receptor RF 433 MHz</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">3</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">Push Button</td><td class="p-4 border-b border-white/5 text-slate-400">PB1, PB2, PB3 (momentáneos)</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">4</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">2N2222 (NPN)</td><td class="p-4 border-b border-white/5 text-slate-400">Puente H para control de motor</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">4</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">1N4007</td><td class="p-4 border-b border-white/5 text-slate-400">Diodos protección flyback</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">Motor DC 5V</td><td class="p-4 border-b border-white/5 text-slate-400">Motor de corriente directa</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">LED</td><td class="p-4 border-b border-white/5 text-slate-400">Indicador luminoso receptor</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">3</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">R 10 kΩ</td><td class="p-4 border-b border-white/5 text-slate-400">Pull-down AD8, AD9, AD10</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">4</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">R 1 kΩ</td><td class="p-4 border-b border-white/5 text-slate-400">Base de transistores 2N2222</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">R 330 Ω</td><td class="p-4 border-b border-white/5 text-slate-400">Limitadora de corriente del LED</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">R 1 MΩ</td><td class="p-4 border-b border-white/5 text-slate-400">Oscilador HT12E</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">1</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">R 33 kΩ</td><td class="p-4 border-b border-white/5 text-slate-400">Oscilador HT12D</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">2</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">Fuente 5V</td><td class="p-4 border-b border-white/5 text-slate-400">Una para TX, una para RX</td></tr>
+                            <tr class="hover:bg-white/5 transition-colors"><td class="p-4 border-b border-white/5 text-cyan-400 font-bold">2</td><td class="p-4 border-b border-white/5 text-slate-200 font-semibold">Antena ~17 cm</td><td class="p-4 border-b border-white/5 text-slate-400">Hilo para FS1000A y MX-RM-5V</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ DIAGRAMA GENERAL DEL SISTEMA ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <i class="ph ph-flow-arrow text-neon-green"></i> Diagrama General del Sistema
+                </h2>
+                <p class="text-slate-400 text-sm mb-6">Vista completa del flujo de señal desde los botones hasta las salidas del receptor.</p>
+                <div class="canvas-container" id="viewer-canvasSystem">
+                    <canvas id="canvasSystem"></canvas>
+                    <div class="canvas-toolbar">
+                        <button onclick="canvasViewers.canvasSystem.zoomIn()" title="Acercar"><i class="ph ph-magnifying-glass-plus"></i></button>
+                        <button onclick="canvasViewers.canvasSystem.zoomOut()" title="Alejar"><i class="ph ph-magnifying-glass-minus"></i></button>
+                        <button onclick="canvasViewers.canvasSystem.reset()" title="Restablecer"><i class="ph ph-arrows-out"></i></button>
+                        <span class="canvas-zoom-level" id="zoom-canvasSystem">100%</span>
+                    </div>
+                    <div class="canvas-hint"><i class="ph ph-mouse-simple"></i> Scroll = zoom · Arrastra = mover</div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ MÓDULOS RF ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-wifi-high text-neon-blue"></i> Módulos RF 433 MHz
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- FS1000A -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20 text-cyan-400">
+                                <i class="ph ph-broadcast text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display font-bold text-white">FS1000A</h3>
+                                <p class="text-xs text-slate-500">Transmisor RF</p>
+                            </div>
+                        </div>
+                        <table class="w-full text-left pin-table">
+                            <thead><tr>
+                                <th class="pb-2 text-slate-500 border-b border-white/10">Pin</th>
+                                <th class="pb-2 text-slate-500 border-b border-white/10">Descripción</th>
+                            </tr></thead>
+                            <tbody class="text-slate-300">
+                                <tr><td class="py-2 border-b border-white/5 text-red-400">VCC</td><td class="py-2 border-b border-white/5">3.5–12V (usar 5V)</td></tr>
+                                <tr><td class="py-2 border-b border-white/5 text-slate-500">GND</td><td class="py-2 border-b border-white/5">Tierra</td></tr>
+                                <tr><td class="py-2 border-b border-white/5 text-cyan-400">DATA</td><td class="py-2 border-b border-white/5">← HT12E DOUT</td></tr>
+                                <tr><td class="py-2 text-yellow-400">ANT</td><td class="py-2">Antena ~17 cm</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- MX-RM-5V -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center border border-purple-500/20 text-purple-400">
+                                <i class="ph ph-radio text-xl"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-display font-bold text-white">MX-RM-5V</h3>
+                                <p class="text-xs text-slate-500">Receptor RF</p>
+                            </div>
+                        </div>
+                        <table class="w-full text-left pin-table">
+                            <thead><tr>
+                                <th class="pb-2 text-slate-500 border-b border-white/10">Pin</th>
+                                <th class="pb-2 text-slate-500 border-b border-white/10">Descripción</th>
+                            </tr></thead>
+                            <tbody class="text-slate-300">
+                                <tr><td class="py-2 border-b border-white/5 text-red-400">VCC</td><td class="py-2 border-b border-white/5">5V</td></tr>
+                                <tr><td class="py-2 border-b border-white/5 text-slate-500">GND</td><td class="py-2 border-b border-white/5">Tierra</td></tr>
+                                <tr><td class="py-2 border-b border-white/5 text-cyan-400">DATA ×2</td><td class="py-2 border-b border-white/5">→ HT12D DIN</td></tr>
+                                <tr><td class="py-2 text-yellow-400">ANT</td><td class="py-2">Antena ~17 cm</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ HT12E TRANSMISOR ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <i class="ph ph-cpu text-neon-blue"></i> HT12E — Codificador (Transmisor)
+                </h2>
+                <p class="text-slate-400 text-sm mb-6">Pinout DIP-18 y circuito del lado transmisor con botones y pull-downs.</p>
+
+                <div class="canvas-container mb-8" id="viewer-canvasTX">
+                    <canvas id="canvasTX"></canvas>
+                    <div class="canvas-toolbar">
+                        <button onclick="canvasViewers.canvasTX.zoomIn()" title="Acercar"><i class="ph ph-magnifying-glass-plus"></i></button>
+                        <button onclick="canvasViewers.canvasTX.zoomOut()" title="Alejar"><i class="ph ph-magnifying-glass-minus"></i></button>
+                        <button onclick="canvasViewers.canvasTX.reset()" title="Restablecer"><i class="ph ph-arrows-out"></i></button>
+                        <span class="canvas-zoom-level" id="zoom-canvasTX">100%</span>
+                    </div>
+                    <div class="canvas-hint"><i class="ph ph-mouse-simple"></i> Scroll = zoom · Arrastra = mover</div>
+                </div>
+
+                <!-- Pinout Table -->
+                <div class="overflow-x-auto rounded-2xl border border-white/5 mb-6">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Pin</th>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Nombre</th>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Función</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">1–8</td><td class="p-3 border-b border-white/5 text-slate-200">A0–A7</td><td class="p-3 border-b border-white/5 text-slate-400">Dirección → GND (0x00)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">9</td><td class="p-3 border-b border-white/5 text-slate-200">VSS</td><td class="p-3 border-b border-white/5 text-slate-400">GND</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">10</td><td class="p-3 border-b border-white/5 text-slate-200">AD8</td><td class="p-3 border-b border-white/5 text-slate-400">Pull-down 10kΩ + PB1 → VCC</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">11</td><td class="p-3 border-b border-white/5 text-slate-200">AD9</td><td class="p-3 border-b border-white/5 text-slate-400">Pull-down 10kΩ + PB2 → VCC</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">12</td><td class="p-3 border-b border-white/5 text-slate-200">AD10</td><td class="p-3 border-b border-white/5 text-slate-400">Pull-down 10kΩ + PB3 → VCC</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">13</td><td class="p-3 border-b border-white/5 text-slate-200">AD11</td><td class="p-3 border-b border-white/5 text-slate-400">No usado → GND</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">14</td><td class="p-3 border-b border-white/5 text-slate-200">TE</td><td class="p-3 border-b border-white/5 text-slate-400">Activo LOW → GND (siempre habilitado)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">15–16</td><td class="p-3 border-b border-white/5 text-slate-200">OSC1/OSC2</td><td class="p-3 border-b border-white/5 text-slate-400">Resistencia 1 MΩ entre ambos</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">17</td><td class="p-3 border-b border-white/5 text-slate-200">DOUT</td><td class="p-3 border-b border-white/5 text-slate-400">Salida serial → FS1000A DATA</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono">18</td><td class="p-3 border-b border-white/5 text-slate-200">VDD</td><td class="p-3 border-b border-white/5 text-slate-400">+5V</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Info Callouts -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex gap-3 p-4 bg-cyan-500/5 border border-cyan-500/15 rounded-xl">
+                        <i class="ph ph-info text-cyan-400 mt-0.5 text-lg flex-shrink-0"></i>
+                        <p class="text-slate-300 text-sm"><strong class="text-cyan-300">Lógica de datos:</strong> AD8–AD11 usan lógica activa HIGH. Pull-down 10kΩ mantiene LOW en reposo. Al pulsar → VCC (HIGH).</p>
+                    </div>
+                    <div class="flex gap-3 p-4 bg-purple-500/5 border border-purple-500/15 rounded-xl">
+                        <i class="ph ph-key text-purple-400 mt-0.5 text-lg flex-shrink-0"></i>
+                        <p class="text-slate-300 text-sm"><strong class="text-purple-300">Dirección:</strong> A0–A7 todos a GND → dirección <code class="text-purple-300">0x00</code>. Debe coincidir con el HT12D.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ HT12D RECEPTOR ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <i class="ph ph-cpu text-neon-purple"></i> HT12D — Decodificador (Receptor)
+                </h2>
+                <p class="text-slate-400 text-sm mb-6">Pinout DIP-18 y circuito del lado receptor con LED y salidas al Puente H.</p>
+
+                <div class="canvas-container mb-8" id="viewer-canvasRX">
+                    <canvas id="canvasRX"></canvas>
+                    <div class="canvas-toolbar">
+                        <button onclick="canvasViewers.canvasRX.zoomIn()" title="Acercar"><i class="ph ph-magnifying-glass-plus"></i></button>
+                        <button onclick="canvasViewers.canvasRX.zoomOut()" title="Alejar"><i class="ph ph-magnifying-glass-minus"></i></button>
+                        <button onclick="canvasViewers.canvasRX.reset()" title="Restablecer"><i class="ph ph-arrows-out"></i></button>
+                        <span class="canvas-zoom-level" id="zoom-canvasRX">100%</span>
+                    </div>
+                    <div class="canvas-hint"><i class="ph ph-mouse-simple"></i> Scroll = zoom · Arrastra = mover</div>
+                </div>
+
+                <div class="overflow-x-auto rounded-2xl border border-white/5 mb-6">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Pin</th>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Nombre</th>
+                                <th class="p-3 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Función</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">1–8</td><td class="p-3 border-b border-white/5 text-slate-200">A0–A7</td><td class="p-3 border-b border-white/5 text-slate-400">Dirección → GND (0x00, igual que TX)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">9</td><td class="p-3 border-b border-white/5 text-slate-200">VSS</td><td class="p-3 border-b border-white/5 text-slate-400">GND</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">10</td><td class="p-3 border-b border-white/5 text-slate-200">D8</td><td class="p-3 border-b border-white/5 text-slate-400">→ R 330Ω → LED → GND</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">11</td><td class="p-3 border-b border-white/5 text-slate-200">D9</td><td class="p-3 border-b border-white/5 text-slate-400">→ IN_FWD (Puente H Forward)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">12</td><td class="p-3 border-b border-white/5 text-slate-200">D10</td><td class="p-3 border-b border-white/5 text-slate-400">→ IN_REV (Puente H Reverse)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">13</td><td class="p-3 border-b border-white/5 text-slate-200">D11</td><td class="p-3 border-b border-white/5 text-slate-400">No usada</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">14</td><td class="p-3 border-b border-white/5 text-slate-200">DIN</td><td class="p-3 border-b border-white/5 text-slate-400">← MX-RM-5V DATA</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">15–16</td><td class="p-3 border-b border-white/5 text-slate-200">OSC1/OSC2</td><td class="p-3 border-b border-white/5 text-slate-400">Resistencia 33 kΩ entre ambos</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">17</td><td class="p-3 border-b border-white/5 text-slate-200">VT</td><td class="p-3 border-b border-white/5 text-slate-400">Valid Transmission (HIGH cuando señal válida)</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono">18</td><td class="p-3 border-b border-white/5 text-slate-200">VDD</td><td class="p-3 border-b border-white/5 text-slate-400">+5V</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ PUENTE H ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-2 flex items-center gap-3">
+                    <i class="ph ph-git-merge text-neon-green"></i> Puente H — 4× 2N2222 NPN
+                </h2>
+                <p class="text-slate-400 text-sm mb-6">Control bidireccional del motor DC con cuatro transistores NPN y diodos flyback de protección.</p>
+
+                <div class="canvas-container mb-8" id="viewer-canvasHBridge">
+                    <canvas id="canvasHBridge"></canvas>
+                    <div class="canvas-toolbar">
+                        <button onclick="canvasViewers.canvasHBridge.zoomIn()" title="Acercar"><i class="ph ph-magnifying-glass-plus"></i></button>
+                        <button onclick="canvasViewers.canvasHBridge.zoomOut()" title="Alejar"><i class="ph ph-magnifying-glass-minus"></i></button>
+                        <button onclick="canvasViewers.canvasHBridge.reset()" title="Restablecer"><i class="ph ph-arrows-out"></i></button>
+                        <span class="canvas-zoom-level" id="zoom-canvasHBridge">100%</span>
+                    </div>
+                    <div class="canvas-hint"><i class="ph ph-mouse-simple"></i> Scroll = zoom · Arrastra = mover</div>
+                </div>
+
+                <!-- Activación Table -->
+                <div class="overflow-x-auto rounded-2xl border border-white/5 mb-8">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Activación</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Q Activos</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Terminal A</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Terminal B</th>
+                                <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest border-b border-white/10">Giro</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="p-4 border-b border-white/5"><span class="text-green-400 font-bold font-mono">IN_FWD=1</span></td>
+                                <td class="p-4 border-b border-white/5 text-slate-200">Q1 + Q4</td>
+                                <td class="p-4 border-b border-white/5 text-red-400">~4.3V (HIGH)</td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">GND (LOW)</td>
+                                <td class="p-4 border-b border-white/5"><span class="inline-flex items-center gap-1 text-green-400"><i class="ph ph-arrow-clockwise"></i> Horario</span></td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="p-4 border-b border-white/5"><span class="text-orange-400 font-bold font-mono">IN_REV=1</span></td>
+                                <td class="p-4 border-b border-white/5 text-slate-200">Q2 + Q3</td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">GND (LOW)</td>
+                                <td class="p-4 border-b border-white/5 text-red-400">~4.3V (HIGH)</td>
+                                <td class="p-4 border-b border-white/5"><span class="inline-flex items-center gap-1 text-orange-400"><i class="ph ph-arrow-counter-clockwise"></i> Antihorario</span></td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition-colors">
+                                <td class="p-4 border-b border-white/5"><span class="text-slate-500 font-bold font-mono">Ninguno</span></td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">Ninguno</td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">Flotante</td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">Flotante</td>
+                                <td class="p-4 border-b border-white/5 text-slate-500">Libre / Stop</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Warning -->
+                <div class="flex gap-3 p-5 bg-red-500/5 border border-red-500/20 rounded-xl mb-6">
+                    <i class="ph ph-warning text-red-400 mt-0.5 text-xl flex-shrink-0"></i>
+                    <div>
+                        <p class="text-red-300 font-bold text-sm mb-1">Advertencia: Cortocircuito</p>
+                        <p class="text-slate-400 text-sm">No activar IN_FWD e IN_REV al mismo tiempo — causaría cortocircuito directo de +5V a GND a través de las ramas del puente.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ TABLAS DE CONEXIÓN ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-plugs-connected text-neon-blue"></i> Tablas de Conexión
+                </h2>
+
+                <!-- TX Table -->
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-cyan-400"></span> Circuito Transmisor
+                </h3>
+                <div class="overflow-x-auto rounded-2xl border border-cyan-500/15 mb-8">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-cyan-500/5">
+                            <tr>
+                                <th class="p-3 text-xs font-bold text-cyan-400 uppercase tracking-widest border-b border-white/10">Desde</th>
+                                <th class="p-3 text-xs font-bold text-cyan-400 uppercase tracking-widest border-b border-white/10">Hacia</th>
+                                <th class="p-3 text-xs font-bold text-cyan-400 uppercase tracking-widest border-b border-white/10">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12E Pin 18 (VDD)</td><td class="p-3 border-b border-white/5 text-slate-400">Alimentación</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-slate-500 font-mono text-xs">GND</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12E Pin 9 (VSS)</td><td class="p-3 border-b border-white/5 text-slate-400">Tierra</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-slate-500 font-mono text-xs">GND</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12E Pines 1–8</td><td class="p-3 border-b border-white/5 text-slate-400">Dirección = 0x00</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-slate-500 font-mono text-xs">GND</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12E Pin 13, 14</td><td class="p-3 border-b border-white/5 text-slate-400">AD11 sin usar + TE habilitado</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono text-xs">Pin 16 ↔ 15</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">R 1 MΩ</td><td class="p-3 border-b border-white/5 text-slate-400">Oscilador codificador</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V → PB1</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">Pin 10 (AD8)</td><td class="p-3 border-b border-white/5 text-slate-400">Dato D8 — LED</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V → PB2</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">Pin 11 (AD9)</td><td class="p-3 border-b border-white/5 text-slate-400">Dato D9 — Forward</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V → PB3</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">Pin 12 (AD10)</td><td class="p-3 border-b border-white/5 text-slate-400">Dato D10 — Reverse</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-slate-500 font-mono text-xs">Pin 10,11,12</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">R 10kΩ → GND</td><td class="p-3 border-b border-white/5 text-slate-400">Pull-down cada dato</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono text-xs">Pin 17 (DOUT)</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">FS1000A DATA</td><td class="p-3 border-b border-white/5 text-slate-400">Datos seriales al RF TX</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- RX Table -->
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-purple-400"></span> Circuito Receptor
+                </h3>
+                <div class="overflow-x-auto rounded-2xl border border-purple-500/15 mb-8">
+                    <table class="w-full text-left border-collapse text-sm">
+                        <thead class="bg-purple-500/5">
+                            <tr>
+                                <th class="p-3 text-xs font-bold text-purple-400 uppercase tracking-widest border-b border-white/10">Desde</th>
+                                <th class="p-3 text-xs font-bold text-purple-400 uppercase tracking-widest border-b border-white/10">Hacia</th>
+                                <th class="p-3 text-xs font-bold text-purple-400 uppercase tracking-widest border-b border-white/10">Descripción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">MX-RM-5V VCC</td><td class="p-3 border-b border-white/5 text-slate-400">Alimentación receptor RF</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-mono text-xs">MX-RM-5V DATA</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12D Pin 14 (DIN)</td><td class="p-3 border-b border-white/5 text-slate-400">Datos seriales al decoder</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-red-400 font-mono text-xs">+5V</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12D Pin 18 (VDD)</td><td class="p-3 border-b border-white/5 text-slate-400">Alimentación decodificador</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-slate-500 font-mono text-xs">GND</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">HT12D Pines 1–8, 9</td><td class="p-3 border-b border-white/5 text-slate-400">Dirección 0x00 + VSS</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono text-xs">Pin 16 ↔ 15</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">R 33 kΩ</td><td class="p-3 border-b border-white/5 text-slate-400">Oscilador decodificador</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono text-xs">Pin 10 (D8)</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">R 330Ω → LED → GND</td><td class="p-3 border-b border-white/5 text-slate-400">Control del LED</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono text-xs">Pin 11 (D9)</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">IN_FWD (Q1, Q4)</td><td class="p-3 border-b border-white/5 text-slate-400">Motor Forward al Puente H</td></tr>
+                            <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-mono text-xs">Pin 12 (D10)</td><td class="p-3 border-b border-white/5 text-slate-200 font-mono text-xs">IN_REV (Q2, Q3)</td><td class="p-3 border-b border-white/5 text-slate-400">Motor Reverse al Puente H</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ NOTAS TÉCNICAS ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-note-pencil text-neon-yellow"></i> Notas Técnicas
+                </h2>
+
+                <div class="space-y-4">
+                    <!-- Osciladores -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-display font-bold text-white mb-4 flex items-center gap-2">
+                            <i class="ph ph-wave-sine text-cyan-400"></i> Resistencias de Oscilador
+                        </h3>
+                        <div class="overflow-x-auto rounded-xl border border-white/5">
+                            <table class="w-full text-left border-collapse text-sm">
+                                <thead class="bg-white/5">
+                                    <tr>
+                                        <th class="p-3 text-xs font-bold text-slate-400 uppercase border-b border-white/10">IC</th>
+                                        <th class="p-3 text-xs font-bold text-slate-400 uppercase border-b border-white/10">Resistencia</th>
+                                        <th class="p-3 text-xs font-bold text-slate-400 uppercase border-b border-white/10">Frecuencia</th>
+                                        <th class="p-3 text-xs font-bold text-slate-400 uppercase border-b border-white/10">Pines</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-cyan-400 font-bold">HT12E</td><td class="p-3 border-b border-white/5 text-slate-200">1 MΩ</td><td class="p-3 border-b border-white/5 text-slate-400">~3 kHz</td><td class="p-3 border-b border-white/5 text-slate-400">OSC1 (16) ↔ OSC2 (15)</td></tr>
+                                    <tr class="hover:bg-white/5"><td class="p-3 border-b border-white/5 text-purple-400 font-bold">HT12D</td><td class="p-3 border-b border-white/5 text-slate-200">33 kΩ</td><td class="p-3 border-b border-white/5 text-slate-400">~150 kHz</td><td class="p-3 border-b border-white/5 text-slate-400">OSC1 (16) ↔ OSC2 (15)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="text-slate-400 text-xs mt-3"><i class="ph ph-info mr-1 text-cyan-400"></i>La frecuencia del HT12D debe ser <strong class="text-white">~50× la frecuencia del HT12E</strong> para correcta decodificación.</p>
+                    </div>
+
+                    <!-- Corriente 2N2222 -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-display font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="ph ph-lightning text-yellow-400"></i> Capacidad de Corriente — 2N2222
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 text-center">
+                                <p class="text-2xl font-bold text-white font-mono">600<span class="text-sm text-slate-400 ml-1">mA</span></p>
+                                <p class="text-xs text-slate-500 mt-1">IC máx.</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 text-center">
+                                <p class="text-2xl font-bold text-cyan-400 font-mono">4.3<span class="text-sm text-slate-400 ml-1">mA</span></p>
+                                <p class="text-xs text-slate-500 mt-1">IB con RB=1kΩ</p>
+                            </div>
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 text-center">
+                                <p class="text-2xl font-bold text-green-400 font-mono">430<span class="text-sm text-slate-400 ml-1">mA</span></p>
+                                <p class="text-xs text-slate-500 mt-1">IC sat (hFE≈100)</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-xs mt-3">IB = (5V − 0.7V) / 1kΩ ≈ 4.3mA → IC_sat ≈ 430mA. Margen adecuado para motores ≤300mA.</p>
+                    </div>
+
+                    <!-- Antenas -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-display font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="ph ph-cell-tower text-green-400"></i> Antenas
+                        </h3>
+                        <div class="flex gap-3 items-start">
+                            <div class="bg-white/5 rounded-xl p-4 border border-white/5 text-center flex-shrink-0">
+                                <p class="text-2xl font-bold text-white font-mono">17.3<span class="text-sm text-slate-400 ml-1">cm</span></p>
+                                <p class="text-xs text-slate-500 mt-1">λ/4 a 433 MHz</p>
+                            </div>
+                            <ul class="text-slate-400 text-sm space-y-2 mt-1">
+                                <li class="flex gap-2"><i class="ph ph-check text-green-400 mt-0.5 flex-shrink-0"></i>Hilo rígido de ~17 cm soldado verticalmente en el pad ANT</li>
+                                <li class="flex gap-2"><i class="ph ph-check text-green-400 mt-0.5 flex-shrink-0"></i>Mantener alejadas de objetos metálicos</li>
+                                <li class="flex gap-2"><i class="ph ph-check text-green-400 mt-0.5 flex-shrink-0"></i>Paralelas entre sí para mayor alcance</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Alimentación -->
+                    <div class="glass-panel p-6 rounded-2xl">
+                        <h3 class="font-display font-bold text-white mb-3 flex items-center gap-2">
+                            <i class="ph ph-battery-charging text-red-400"></i> Alimentación
+                        </h3>
+                        <ul class="text-slate-400 text-sm space-y-2">
+                            <li class="flex gap-2"><i class="ph ph-check text-cyan-400 mt-0.5 flex-shrink-0"></i>TX y RX pueden compartir fuente o usar fuentes independientes</li>
+                            <li class="flex gap-2"><i class="ph ph-check text-cyan-400 mt-0.5 flex-shrink-0"></i>Capacitor de desacoplo <strong class="text-white">100 µF</strong> en paralelo con alimentación del motor</li>
+                            <li class="flex gap-2"><i class="ph ph-check text-cyan-400 mt-0.5 flex-shrink-0"></i>Si el motor demanda picos altos, usar fuente separada para +5V motor</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ═══════════════════ VERIFICACIÓN ═══════════════════ -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-3">
+                    <i class="ph ph-seal-check text-neon-green"></i> Verificación del Circuito
+                </h2>
+                <div class="glass-panel p-6 rounded-2xl">
+                    <p class="text-slate-300 text-sm mb-4">El diagrama de conexión fue analizado punto por punto. Todos los componentes están correctamente conectados:</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div class="flex gap-3 p-3 bg-green-500/5 border border-green-500/15 rounded-lg">
+                            <i class="ph ph-check-circle text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-slate-300 text-xs"><strong class="text-green-300">HT12E:</strong> Direcciones, oscilador 1MΩ, pull-downs en AD8–AD10, TE a GND, DOUT → FS1000A</p>
+                        </div>
+                        <div class="flex gap-3 p-3 bg-green-500/5 border border-green-500/15 rounded-lg">
+                            <i class="ph ph-check-circle text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-slate-300 text-xs"><strong class="text-green-300">HT12D:</strong> Dirección 0x00 coincidente, oscilador 33kΩ (~50× ratio), DIN desde MX-RM-5V</p>
+                        </div>
+                        <div class="flex gap-3 p-3 bg-green-500/5 border border-green-500/15 rounded-lg">
+                            <i class="ph ph-check-circle text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-slate-300 text-xs"><strong class="text-green-300">RF 433 MHz:</strong> FS1000A y MX-RM-5V correctamente alimentados y con antenas de λ/4</p>
+                        </div>
+                        <div class="flex gap-3 p-3 bg-green-500/5 border border-green-500/15 rounded-lg">
+                            <i class="ph ph-check-circle text-green-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-slate-300 text-xs"><strong class="text-green-300">Puente H:</strong> Q1/Q2 colector común, Q3/Q4 emisor común, flyback D1–D4 correctos</p>
+                        </div>
+                        <div class="flex gap-3 p-3 bg-yellow-500/5 border border-yellow-500/15 rounded-lg md:col-span-2">
+                            <i class="ph ph-warning text-yellow-400 mt-0.5 flex-shrink-0"></i>
+                            <p class="text-slate-300 text-xs"><strong class="text-yellow-300">Nota:</strong> No hay protección de hardware contra pulsación simultánea de PB2+PB3 (shoot-through). Q1/Q2 como emitter follower dan ~4.3V (−VBE). Aceptable para proyecto educativo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="glow-line mb-8"></div>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center pt-8">
+                <a href="topic-11.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>Tema Anterior</span>
+                </a>
+                <button disabled class="flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-800 text-slate-500 font-bold opacity-50 cursor-not-allowed border border-white/5">
+                    <span>Siguiente Tema</span>
+                    <i class="ph ph-lock"></i>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Canvas Diagram Scripts -->
+    <script src="../js/diagrams.js"></script>
+    <script type="text/plain" id="old-diagrams-backup">
+    (function() {
+        const DPR = window.devicePixelRatio || 1;
+        const COLORS = {
+            bg: '#080C14',
+            gridLine: 'rgba(56,189,248,0.04)',
+            wire: '#38bdf8',
+            wireGreen: '#34d399',
+            wirePurple: '#c084fc',
+            wireRed: '#f87171',
+            wireOrange: '#fb923c',
+            wireYellow: '#fbbf24',
+            wireDim: '#475569',
+            chipBody: '#1e293b',
+            chipBorder: '#334155',
+            chipText: '#e2e8f0',
+            chipLabel: '#38bdf8',
+            pinText: '#94a3b8',
+            labelText: '#e2e8f0',
+            gnd: '#64748b',
+            vcc: '#f87171',
+            component: '#0f172a',
+            componentBorder: '#334155',
+            note: 'rgba(56,189,248,0.08)',
+        };
+
+        function setupCanvas(id) {
+            const canvas = document.getElementById(id);
+            if (!canvas) return null;
+            const rect = canvas.getBoundingClientRect();
+            const w = canvas.width;
+            const h = canvas.height;
+            canvas.width = w * DPR;
+            canvas.height = h * DPR;
+            canvas.style.width = w + 'px';
+            canvas.style.height = h + 'px';
+            const ctx = canvas.getContext('2d');
+            ctx.scale(DPR, DPR);
+            return { ctx, w, h };
+        }
+
+        function drawGrid(ctx, w, h) {
+            ctx.fillStyle = COLORS.bg;
+            ctx.fillRect(0, 0, w, h);
+            ctx.strokeStyle = COLORS.gridLine;
+            ctx.lineWidth = 0.5;
+            for (let x = 0; x < w; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+            for (let y = 0; y < h; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+        }
+
+        function drawChip(ctx, x, y, w, h, label, pins_l, pins_r) {
+            // Body
+            ctx.fillStyle = COLORS.chipBody;
+            ctx.strokeStyle = COLORS.chipBorder;
+            ctx.lineWidth = 2;
+            roundRect(ctx, x, y, w, h, 8);
+            ctx.fill();
+            ctx.stroke();
+            // Notch
+            ctx.fillStyle = COLORS.bg;
+            ctx.beginPath();
+            ctx.arc(x + w/2, y, 6, 0, Math.PI);
+            ctx.fill();
+            ctx.strokeStyle = COLORS.chipBorder;
+            ctx.stroke();
+            // Label
+            ctx.fillStyle = COLORS.chipLabel;
+            ctx.font = 'bold 14px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, x + w/2, y + h/2 - 8);
+            ctx.fillStyle = COLORS.pinText;
+            ctx.font = '10px "Inter", sans-serif';
+            ctx.fillText('DIP-18', x + w/2, y + h/2 + 8);
+            // Pins
+            const pinSpacing = h / (pins_l.length + 1);
+            ctx.font = '10px "JetBrains Mono", monospace';
+            for (let i = 0; i < pins_l.length; i++) {
+                const py = y + pinSpacing * (i + 1);
+                // Left pin dot
+                ctx.fillStyle = COLORS.chipBorder;
+                ctx.fillRect(x - 12, py - 3, 12, 6);
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'right';
+                ctx.fillText(pins_l[i].num, x - 18, py + 1);
+                ctx.fillStyle = COLORS.chipText;
+                ctx.textAlign = 'left';
+                ctx.fillText(pins_l[i].name, x + 8, py + 1);
+            }
+            for (let i = 0; i < pins_r.length; i++) {
+                const py = y + pinSpacing * (i + 1);
+                ctx.fillStyle = COLORS.chipBorder;
+                ctx.fillRect(x + w, py - 3, 12, 6);
+                ctx.fillStyle = '#94a3b8';
+                ctx.textAlign = 'left';
+                ctx.fillText(pins_r[i].num, x + w + 18, py + 1);
+                ctx.fillStyle = COLORS.chipText;
+                ctx.textAlign = 'right';
+                ctx.fillText(pins_r[i].name, x + w - 8, py + 1);
+            }
+            return pinSpacing;
+        }
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function drawWire(ctx, points, color, dashed) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            if (dashed) ctx.setLineDash([6, 4]);
+            else ctx.setLineDash([]);
+            ctx.beginPath();
+            ctx.moveTo(points[0][0], points[0][1]);
+            for (let i = 1; i < points.length; i++) ctx.lineTo(points[i][0], points[i][1]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        function drawNode(ctx, x, y, color) {
+            ctx.fillStyle = color || COLORS.wire;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function drawLabel(ctx, x, y, text, color, align, size) {
+            ctx.fillStyle = color || COLORS.labelText;
+            ctx.font = (size || '11') + 'px "Inter", sans-serif';
+            ctx.textAlign = align || 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+
+        function drawBoldLabel(ctx, x, y, text, color, align) {
+            ctx.fillStyle = color || COLORS.labelText;
+            ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+            ctx.textAlign = align || 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+
+        function drawBox(ctx, x, y, w, h, label, color, borderColor) {
+            ctx.fillStyle = color || COLORS.component;
+            ctx.strokeStyle = borderColor || COLORS.componentBorder;
+            ctx.lineWidth = 1.5;
+            roundRect(ctx, x, y, w, h, 6);
+            ctx.fill();
+            ctx.stroke();
+            if (label) {
+                ctx.fillStyle = COLORS.chipText;
+                ctx.font = 'bold 11px "Space Grotesk", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, x + w/2, y + h/2);
+            }
+        }
+
+        function drawResistor(ctx, x1, y1, x2, y2, label, color) {
+            const dx = x2 - x1, dy = y2 - y1;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            const ux = dx/len, uy = dy/len;
+            const px = -uy, py = ux;
+            ctx.strokeStyle = color || '#fb923c';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            const segLen = len / 8;
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(x1 + ux * segLen, y1 + uy * segLen);
+            for (let i = 1; i <= 5; i++) {
+                const cx = x1 + ux * segLen * (i + 0.5);
+                const cy = y1 + uy * segLen * (i + 0.5);
+                const side = (i % 2 === 1) ? 6 : -6;
+                ctx.lineTo(cx + px * side, cy + py * side);
+            }
+            ctx.lineTo(x1 + ux * segLen * 7, y1 + uy * segLen * 7);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            if (label) {
+                const mx = (x1 + x2) / 2 + px * 14;
+                const my = (y1 + y2) / 2 + py * 14;
+                drawLabel(ctx, mx, my, label, '#fb923c', 'center', '9');
+            }
+        }
+
+        function drawButton(ctx, x, y, label) {
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1.5;
+            roundRect(ctx, x - 20, y - 14, 40, 28, 6);
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath();
+            ctx.arc(x, y, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            drawLabel(ctx, x, y - 24, label, COLORS.chipText, 'center', '10');
+        }
+
+        function drawLED(ctx, x, y, color) {
+            ctx.fillStyle = color || '#fbbf24';
+            ctx.globalAlpha = 0.3;
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+            ctx.beginPath();
+            ctx.moveTo(x - 8, y - 8);
+            ctx.lineTo(x + 8, y - 8);
+            ctx.lineTo(x, y + 8);
+            ctx.closePath();
+            ctx.fillStyle = color || '#fbbf24';
+            ctx.fill();
+            ctx.strokeStyle = color || '#fbbf24';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x - 8, y + 8);
+            ctx.lineTo(x + 8, y + 8);
+            ctx.stroke();
+        }
+
+        function drawMotor(ctx, x, y) {
+            ctx.strokeStyle = '#34d399';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(x, y, 22, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.arc(x, y, 22, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.strokeStyle = '#34d399';
+            ctx.stroke();
+            ctx.fillStyle = '#34d399';
+            ctx.font = 'bold 16px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('M', x, y);
+        }
+
+        function drawAntenna(ctx, x, y, h) {
+            ctx.strokeStyle = COLORS.wireYellow;
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y);
+            ctx.lineTo(x, y - h);
+            ctx.stroke();
+            // tip
+            ctx.beginPath();
+            ctx.arc(x, y - h, 3, 0, Math.PI * 2);
+            ctx.fillStyle = COLORS.wireYellow;
+            ctx.fill();
+            // waves
+            ctx.strokeStyle = 'rgba(251,191,36,0.3)';
+            ctx.lineWidth = 1;
+            for (let i = 1; i <= 3; i++) {
+                ctx.beginPath();
+                ctx.arc(x, y - h, 6 + i * 6, -Math.PI * 0.6, -Math.PI * 0.4);
+                ctx.stroke();
+            }
+        }
+
+        function drawDiode(ctx, x1, y1, x2, y2, label) {
+            const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+            const dx = x2 - x1, dy = y2 - y1;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            const ux = dx/len, uy = dy/len;
+            const px = -uy, py = ux;
+            ctx.strokeStyle = '#c084fc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(mx - ux * 8, my - uy * 8);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(mx + ux * 8, my + uy * 8);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+            // Triangle
+            ctx.fillStyle = '#c084fc';
+            ctx.beginPath();
+            ctx.moveTo(mx - ux * 8 + px * 6, my - uy * 8 + py * 6);
+            ctx.lineTo(mx - ux * 8 - px * 6, my - uy * 8 - py * 6);
+            ctx.lineTo(mx + ux * 4, my + uy * 4);
+            ctx.closePath();
+            ctx.fill();
+            // Bar
+            ctx.strokeStyle = '#c084fc';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(mx + ux * 4 + px * 6, my + uy * 4 + py * 6);
+            ctx.lineTo(mx + ux * 4 - px * 6, my + uy * 4 - py * 6);
+            ctx.stroke();
+            if (label) drawLabel(ctx, mx + px * 14, my + py * 14, label, '#c084fc', 'center', '9');
+        }
+
+        function drawTransistor(ctx, x, y, label, config) {
+            const r = 16;
+            ctx.strokeStyle = '#94a3b8';
+            ctx.fillStyle = '#0f172a';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(x, y, r, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.stroke();
+            // Base line
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x - r, y);
+            ctx.lineTo(x - 6, y);
+            ctx.stroke();
+            // Emitter & Collector
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y - 8);
+            ctx.lineTo(x - 6, y + 8);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y - 5);
+            ctx.lineTo(x + 8, y - 12);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y + 5);
+            ctx.lineTo(x + 8, y + 12);
+            ctx.stroke();
+            // Arrow on emitter
+            ctx.fillStyle = '#94a3b8';
+            ctx.beginPath();
+            ctx.moveTo(x + 8, y + 12);
+            ctx.lineTo(x + 2, y + 6);
+            ctx.lineTo(x + 1, y + 12);
+            ctx.closePath();
+            ctx.fill();
+            // Label
+            if (label) {
+                ctx.fillStyle = COLORS.chipText;
+                ctx.font = 'bold 10px "JetBrains Mono", monospace';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, x, y + r + 14);
+            }
+            if (config) {
+                ctx.fillStyle = '#64748b';
+                ctx.font = '8px "Inter", sans-serif';
+                ctx.fillText(config, x, y + r + 26);
+            }
+        }
+
+        // ============================
+        // SYSTEM OVERVIEW DIAGRAM
+        // ============================
+        (function drawSystemDiagram() {
+            const setup = setupCanvas('canvasSystem');
+            if (!setup) return;
+            const { ctx, w, h } = setup;
+            drawGrid(ctx, w, h);
+
+            // Title
+            drawBoldLabel(ctx, w/2, 25, 'DIAGRAMA GENERAL DEL SISTEMA — RF 433 MHz', COLORS.chipLabel, 'center');
+
+            // TX Side box
+            ctx.fillStyle = 'rgba(56,189,248,0.04)';
+            ctx.strokeStyle = 'rgba(56,189,248,0.15)';
+            ctx.lineWidth = 1;
+            roundRect(ctx, 30, 50, 380, 420, 12);
+            ctx.fill();
+            ctx.stroke();
+            drawBoldLabel(ctx, 220, 72, 'LADO TRANSMISOR · +5V / GND', '#38bdf8', 'center');
+
+            // RX Side box
+            ctx.fillStyle = 'rgba(192,132,252,0.04)';
+            ctx.strokeStyle = 'rgba(192,132,252,0.15)';
+            roundRect(ctx, 690, 50, 380, 420, 12);
+            ctx.fill();
+            ctx.stroke();
+            drawBoldLabel(ctx, 880, 72, 'LADO RECEPTOR · +5V / GND', '#c084fc', 'center');
+
+            // Air section
+            ctx.fillStyle = 'rgba(251,191,36,0.04)';
+            ctx.strokeStyle = 'rgba(251,191,36,0.12)';
+            roundRect(ctx, 430, 180, 240, 140, 12);
+            ctx.fill();
+            ctx.stroke();
+            drawBoldLabel(ctx, 550, 250, 'RF 433 MHz', COLORS.wireYellow, 'center');
+            ctx.fillStyle = 'rgba(251,191,36,0.5)';
+            ctx.font = '20px "Inter", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('〰〰〰', 550, 225);
+
+            // TX Components
+            drawButton(ctx, 100, 150, 'PB1 LED');
+            drawButton(ctx, 100, 210, 'PB2 FWD');
+            drawButton(ctx, 100, 270, 'PB3 REV');
+
+            drawBox(ctx, 200, 120, 120, 200, '', '#0f172a', '#1e4a6e');
+            ctx.fillStyle = '#38bdf8';
+            ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('HT12E', 260, 195);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px "Inter", sans-serif';
+            ctx.fillText('Codificador', 260, 215);
+            ctx.fillText('OSC: 1MΩ', 260, 230);
+            ctx.fillText('A0-A7 → GND', 260, 245);
+            ctx.fillText('TE → GND', 260, 260);
+
+            drawBox(ctx, 210, 360, 100, 50, 'FS1000A', '#0f172a', '#1e4a6e');
+            drawLabel(ctx, 260, 425, 'TX RF 433MHz', '#38bdf8', 'center', '10');
+
+            drawAntenna(ctx, 360, 380, 50);
+            drawLabel(ctx, 375, 350, '~17cm', COLORS.wireYellow, 'left', '9');
+
+            // Wires TX
+            drawWire(ctx, [[120, 150], [200, 150]], COLORS.wire, false);
+            drawWire(ctx, [[120, 210], [200, 210]], COLORS.wire, false);
+            drawWire(ctx, [[120, 270], [200, 270]], COLORS.wire, false);
+            drawLabel(ctx, 155, 140, 'AD8', '#94a3b8', 'center', '9');
+            drawLabel(ctx, 155, 200, 'AD9', '#94a3b8', 'center', '9');
+            drawLabel(ctx, 155, 260, 'AD10', '#94a3b8', 'center', '9');
+
+            drawWire(ctx, [[260, 320], [260, 360]], COLORS.wire, false);
+            drawLabel(ctx, 275, 340, 'DOUT', '#94a3b8', 'left', '9');
+            drawWire(ctx, [[310, 385], [360, 385]], COLORS.wireYellow, false);
+
+            // Antennas to Air
+            drawWire(ctx, [[360, 335], [430, 250]], COLORS.wireYellow, true);
+            drawWire(ctx, [[670, 250], [740, 335]], COLORS.wireYellow, true);
+
+            // RX Components
+            drawAntenna(ctx, 740, 380, 50);
+            drawLabel(ctx, 755, 350, '~17cm', COLORS.wireYellow, 'left', '9');
+
+            drawBox(ctx, 790, 360, 100, 50, 'MX-RM-5V', '#0f172a', '#5b3e7e');
+            drawLabel(ctx, 840, 425, 'RX RF 433MHz', '#c084fc', 'center', '10');
+
+            drawWire(ctx, [[740, 385], [790, 385]], COLORS.wireYellow, false);
+
+            drawBox(ctx, 780, 120, 120, 200, '', '#0f172a', '#5b3e7e');
+            ctx.fillStyle = '#c084fc';
+            ctx.font = 'bold 13px "Space Grotesk", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('HT12D', 840, 195);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '10px "Inter", sans-serif';
+            ctx.fillText('Decodificador', 840, 215);
+            ctx.fillText('OSC: 33kΩ', 840, 230);
+            ctx.fillText('A0-A7 → GND', 840, 245);
+
+            drawWire(ctx, [[840, 320], [840, 360]], COLORS.wirePurple, false);
+            drawLabel(ctx, 855, 340, 'DIN', '#94a3b8', 'left', '9');
+
+            // RX outputs
+            drawLED(ctx, 970, 150, '#fbbf24');
+            drawLabel(ctx, 970, 178, 'LED', COLORS.wireYellow, 'center', '10');
+            drawWire(ctx, [[900, 155], [955, 155]], COLORS.wireYellow, false);
+            drawLabel(ctx, 920, 143, 'D8', '#94a3b8', 'center', '9');
+
+            drawBox(ctx, 940, 210, 80, 50, 'Puente H', '#0f172a', '#1a4a3e');
+            drawLabel(ctx, 980, 275, '4× 2N2222', '#34d399', 'center', '9');
+            drawWire(ctx, [[900, 210], [940, 225]], COLORS.wireGreen, false);
+            drawLabel(ctx, 915, 203, 'D9', '#94a3b8', 'center', '9');
+            drawWire(ctx, [[900, 250], [940, 245]], COLORS.wireRed, false);
+            drawLabel(ctx, 915, 260, 'D10', '#94a3b8', 'center', '9');
+            drawLabel(ctx, 927, 218, 'FWD', '#34d399', 'center', '8');
+            drawLabel(ctx, 927, 255, 'REV', '#f87171', 'center', '8');
+
+            drawMotor(ctx, 1040, 235);
+            drawWire(ctx, [[1020, 235], [1040 - 23, 235]], COLORS.wireGreen, false);
+            drawLabel(ctx, 1040, 270, 'Motor DC', '#34d399', 'center', '10');
+        })();
+
+        // ============================
+        // TX CIRCUIT — HT12E
+        // ============================
+        (function drawTXCircuit() {
+            const setup = setupCanvas('canvasTX');
+            if (!setup) return;
+            const { ctx, w, h } = setup;
+            drawGrid(ctx, w, h);
+
+            drawBoldLabel(ctx, w/2, 25, 'CIRCUITO TRANSMISOR — HT12E + FS1000A', '#38bdf8', 'center');
+
+            const chipX = 380, chipY = 60, chipW = 160, chipH = 420;
+            const pinsL = [
+                {num:'1',name:'A0'},{num:'2',name:'A1'},{num:'3',name:'A2'},{num:'4',name:'A3'},
+                {num:'5',name:'A4'},{num:'6',name:'A5'},{num:'7',name:'A6'},{num:'8',name:'A7'},
+                {num:'9',name:'VSS'}
+            ];
+            const pinsR = [
+                {num:'18',name:'VDD'},{num:'17',name:'DOUT'},{num:'16',name:'OSC1'},
+                {num:'15',name:'OSC2'},{num:'14',name:'TE'},{num:'13',name:'AD11'},
+                {num:'12',name:'AD10'},{num:'11',name:'AD9'},{num:'10',name:'AD8'}
+            ];
+            const ps = drawChip(ctx, chipX, chipY, chipW, chipH, 'HT12E', pinsL, pinsR);
+
+            // Pin Y positions
+            const lyBase = chipY + ps;
+            const ryBase = chipY + ps;
+            function lpy(i) { return chipY + ps * (i + 1); }
+            function rpy(i) { return chipY + ps * (i + 1); }
+
+            // GND rail for address pins
+            const gndX = 200;
+            ctx.strokeStyle = COLORS.gnd;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(gndX, lpy(0) - 10);
+            ctx.lineTo(gndX, lpy(8) + 10);
+            ctx.stroke();
+            drawBoldLabel(ctx, gndX, lpy(8) + 28, 'GND', COLORS.gnd, 'center');
+            // GND symbol
+            ctx.strokeStyle = COLORS.gnd;
+            ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(gndX - 12, lpy(8) + 38); ctx.lineTo(gndX + 12, lpy(8) + 38); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(gndX - 8, lpy(8) + 43); ctx.lineTo(gndX + 8, lpy(8) + 43); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(gndX - 4, lpy(8) + 48); ctx.lineTo(gndX + 4, lpy(8) + 48); ctx.stroke();
+
+            // Wires A0-A7 + VSS to GND
+            for (let i = 0; i <= 8; i++) {
+                drawWire(ctx, [[chipX - 12, lpy(i)], [gndX, lpy(i)]], COLORS.gnd, false);
+                drawNode(ctx, gndX, lpy(i), COLORS.gnd);
+            }
+
+            // VCC rail
+            const vccX = 820;
+            ctx.strokeStyle = COLORS.vcc;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(vccX, rpy(0) - 20);
+            ctx.lineTo(vccX, rpy(0) + 5);
+            ctx.stroke();
+            drawBoldLabel(ctx, vccX, rpy(0) - 28, '+5V', COLORS.vcc, 'center');
+            drawWire(ctx, [[chipX + chipW + 12, rpy(0)], [vccX, rpy(0)]], COLORS.vcc, false);
+            drawNode(ctx, vccX, rpy(0), COLORS.vcc);
+
+            // DOUT → FS1000A
+            const doutY = rpy(1);
+            drawWire(ctx, [[chipX + chipW + 12, doutY], [750, doutY]], COLORS.wire, false);
+            drawBox(ctx, 750, doutY - 25, 120, 50, 'FS1000A', '#0f172a', '#1e4a6e');
+            drawLabel(ctx, 810, doutY + 38, 'Transmisor RF', '#38bdf8', 'center', '10');
+            drawAntenna(ctx, 920, doutY, 45);
+            drawWire(ctx, [[870, doutY], [920, doutY]], COLORS.wireYellow, false);
+
+            // OSC1-OSC2 resistor
+            const osc1Y = rpy(2), osc2Y = rpy(3);
+            drawWire(ctx, [[chipX + chipW + 12, osc1Y], [680, osc1Y]], COLORS.wireOrange, false);
+            drawWire(ctx, [[chipX + chipW + 12, osc2Y], [680, osc2Y]], COLORS.wireOrange, false);
+            drawResistor(ctx, 680, osc1Y, 680, osc2Y, '1 MΩ', '#fb923c');
+            drawLabel(ctx, 710, (osc1Y + osc2Y)/2, 'OSC', '#fb923c', 'left', '9');
+
+            // TE → GND
+            const teY = rpy(4);
+            drawWire(ctx, [[chipX + chipW + 12, teY], [700, teY], [700, teY + 25]], COLORS.gnd, false);
+            drawLabel(ctx, 715, teY, 'GND', COLORS.gnd, 'left', '9');
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(700 - 8, teY + 25); ctx.lineTo(700 + 8, teY + 25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(700 - 5, teY + 29); ctx.lineTo(700 + 5, teY + 29); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(700 - 2, teY + 33); ctx.lineTo(700 + 2, teY + 33); ctx.stroke();
+
+            // AD11 → GND
+            const ad11Y = rpy(5);
+            drawWire(ctx, [[chipX + chipW + 12, ad11Y], [700, ad11Y], [700, ad11Y + 25]], COLORS.gnd, false);
+            drawLabel(ctx, 715, ad11Y, 'GND', COLORS.gnd, 'left', '9');
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(700 - 8, ad11Y + 25); ctx.lineTo(700 + 8, ad11Y + 25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(700 - 5, ad11Y + 29); ctx.lineTo(700 + 5, ad11Y + 29); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(700 - 2, ad11Y + 33); ctx.lineTo(700 + 2, ad11Y + 33); ctx.stroke();
+
+            // AD10, AD9, AD8 — buttons + pull-downs
+            const adPins = [
+                { idx: 6, label: 'PB3 REV', color: COLORS.wireRed },
+                { idx: 7, label: 'PB2 FWD', color: COLORS.wireGreen },
+                { idx: 8, label: 'PB1 LED', color: COLORS.wireYellow }
+            ];
+            const btnVccX = 1000;
+            for (const pin of adPins) {
+                const py = rpy(pin.idx);
+                // Wire from chip to junction
+                drawWire(ctx, [[chipX + chipW + 12, py], [720, py]], pin.color, false);
+                drawNode(ctx, 720, py, pin.color);
+                // Pull-down
+                drawResistor(ctx, 720, py, 720, py + 38, '10kΩ', '#fb923c');
+                drawWire(ctx, [[720, py + 38], [720, py + 55]], COLORS.gnd, false);
+                ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(712, py + 55); ctx.lineTo(728, py + 55); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(715, py + 59); ctx.lineTo(725, py + 59); ctx.stroke();
+                // Button
+                drawWire(ctx, [[720, py], [850, py]], pin.color, false);
+                drawButton(ctx, 900, py, pin.label);
+                drawWire(ctx, [[920, py], [btnVccX, py]], COLORS.vcc, false);
+            }
+            // VCC bus for buttons
+            ctx.strokeStyle = COLORS.vcc;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(btnVccX, rpy(6) - 10);
+            ctx.lineTo(btnVccX, rpy(8) + 10);
+            ctx.stroke();
+            drawBoldLabel(ctx, btnVccX, rpy(6) - 22, '+5V', COLORS.vcc, 'center');
+            for (const pin of adPins) {
+                drawNode(ctx, btnVccX, rpy(pin.idx), COLORS.vcc);
+            }
+        })();
+
+        // ============================
+        // RX CIRCUIT — HT12D
+        // ============================
+        (function drawRXCircuit() {
+            const setup = setupCanvas('canvasRX');
+            if (!setup) return;
+            const { ctx, w, h } = setup;
+            drawGrid(ctx, w, h);
+
+            drawBoldLabel(ctx, w/2, 25, 'CIRCUITO RECEPTOR — MX-RM-5V + HT12D', '#c084fc', 'center');
+
+            const chipX = 380, chipY = 60, chipW = 160, chipH = 420;
+            const pinsL = [
+                {num:'1',name:'A0'},{num:'2',name:'A1'},{num:'3',name:'A2'},{num:'4',name:'A3'},
+                {num:'5',name:'A4'},{num:'6',name:'A5'},{num:'7',name:'A6'},{num:'8',name:'A7'},
+                {num:'9',name:'VSS'}
+            ];
+            const pinsR = [
+                {num:'18',name:'VDD'},{num:'17',name:'VT'},{num:'16',name:'OSC1'},
+                {num:'15',name:'OSC2'},{num:'14',name:'DIN'},{num:'13',name:'D11'},
+                {num:'12',name:'D10'},{num:'11',name:'D9'},{num:'10',name:'D8'}
+            ];
+            const ps = drawChip(ctx, chipX, chipY, chipW, chipH, 'HT12D', pinsL, pinsR);
+
+            function lpy(i) { return chipY + ps * (i + 1); }
+            function rpy(i) { return chipY + ps * (i + 1); }
+
+            // GND rail
+            const gndX = 200;
+            ctx.strokeStyle = COLORS.gnd;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(gndX, lpy(0) - 10);
+            ctx.lineTo(gndX, lpy(8) + 10);
+            ctx.stroke();
+            drawBoldLabel(ctx, gndX, lpy(8) + 28, 'GND', COLORS.gnd, 'center');
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(gndX - 12, lpy(8) + 38); ctx.lineTo(gndX + 12, lpy(8) + 38); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(gndX - 8, lpy(8) + 43); ctx.lineTo(gndX + 8, lpy(8) + 43); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(gndX - 4, lpy(8) + 48); ctx.lineTo(gndX + 4, lpy(8) + 48); ctx.stroke();
+
+            for (let i = 0; i <= 8; i++) {
+                drawWire(ctx, [[chipX - 12, lpy(i)], [gndX, lpy(i)]], COLORS.gnd, false);
+                drawNode(ctx, gndX, lpy(i), COLORS.gnd);
+            }
+
+            // VDD
+            const vccX = 820;
+            drawWire(ctx, [[chipX + chipW + 12, rpy(0)], [vccX, rpy(0)]], COLORS.vcc, false);
+            ctx.strokeStyle = COLORS.vcc; ctx.lineWidth = 3;
+            ctx.beginPath(); ctx.moveTo(vccX, rpy(0) - 20); ctx.lineTo(vccX, rpy(0) + 5); ctx.stroke();
+            drawBoldLabel(ctx, vccX, rpy(0) - 28, '+5V', COLORS.vcc, 'center');
+            drawNode(ctx, vccX, rpy(0), COLORS.vcc);
+
+            // VT (optional)
+            const vtY = rpy(1);
+            drawWire(ctx, [[chipX + chipW + 12, vtY], [660, vtY]], '#64748b', true);
+            drawLabel(ctx, 680, vtY, '(opcional)', '#64748b', 'left', '9');
+
+            // OSC
+            const osc1Y = rpy(2), osc2Y = rpy(3);
+            drawWire(ctx, [[chipX + chipW + 12, osc1Y], [680, osc1Y]], COLORS.wireOrange, false);
+            drawWire(ctx, [[chipX + chipW + 12, osc2Y], [680, osc2Y]], COLORS.wireOrange, false);
+            drawResistor(ctx, 680, osc1Y, 680, osc2Y, '33 kΩ', '#fb923c');
+
+            // DIN ← MX-RM-5V
+            const dinY = rpy(4);
+            drawWire(ctx, [[chipX + chipW + 12, dinY], [750, dinY]], COLORS.wirePurple, false);
+            drawBox(ctx, 750, dinY - 25, 120, 50, 'MX-RM-5V', '#0f172a', '#5b3e7e');
+            drawLabel(ctx, 810, dinY + 38, 'Receptor RF', '#c084fc', 'center', '10');
+            drawAntenna(ctx, 920, dinY, 45);
+            drawWire(ctx, [[870, dinY], [920, dinY]], COLORS.wireYellow, false);
+
+            // D11 — not used
+            drawWire(ctx, [[chipX + chipW + 12, rpy(5)], [660, rpy(5)]], '#334155', true);
+            drawLabel(ctx, 680, rpy(5), '(no usado)', '#475569', 'left', '9');
+
+            // D10 → IN_REV
+            const d10Y = rpy(6);
+            drawWire(ctx, [[chipX + chipW + 12, d10Y], [800, d10Y]], COLORS.wireRed, false);
+            drawBox(ctx, 800, d10Y - 15, 110, 30, 'IN_REV → H-Bridge', '#0f172a', '#7f1d1d');
+            drawLabel(ctx, 855, d10Y + 25, 'Bases Q2, Q3', '#f87171', 'center', '9');
+
+            // D9 → IN_FWD
+            const d9Y = rpy(7);
+            drawWire(ctx, [[chipX + chipW + 12, d9Y], [800, d9Y]], COLORS.wireGreen, false);
+            drawBox(ctx, 800, d9Y - 15, 110, 30, 'IN_FWD → H-Bridge', '#0f172a', '#14532d');
+            drawLabel(ctx, 855, d9Y + 25, 'Bases Q1, Q4', '#34d399', 'center', '9');
+
+            // D8 → LED
+            const d8Y = rpy(8);
+            drawWire(ctx, [[chipX + chipW + 12, d8Y], [720, d8Y]], COLORS.wireYellow, false);
+            drawResistor(ctx, 720, d8Y, 800, d8Y, '330Ω', '#fb923c');
+            drawLED(ctx, 850, d8Y, '#fbbf24');
+            drawWire(ctx, [[815, d8Y], [836, d8Y]], COLORS.wireYellow, false);
+            drawWire(ctx, [[864, d8Y], [920, d8Y], [920, d8Y + 25]], COLORS.gnd, false);
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(912, d8Y + 25); ctx.lineTo(928, d8Y + 25); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(915, d8Y + 29); ctx.lineTo(925, d8Y + 29); ctx.stroke();
+            drawLabel(ctx, 850, d8Y + 22, 'LED', COLORS.wireYellow, 'center', '9');
+        })();
+
+        // ============================
+        // H-BRIDGE DIAGRAM
+        // ============================
+        (function drawHBridgeDiagram() {
+            const setup = setupCanvas('canvasHBridge');
+            if (!setup) return;
+            const { ctx, w, h } = setup;
+            drawGrid(ctx, w, h);
+
+            drawBoldLabel(ctx, w/2, 25, 'PUENTE H — 4× 2N2222 NPN + DIODOS FLYBACK', '#34d399', 'center');
+
+            // Layout
+            const cx = w / 2;
+            const vccY = 80;
+            const topQY = 170;
+            const motorY = 310;
+            const botQY = 440;
+            const gndY = 550;
+            const leftX = cx - 160;
+            const rightX = cx + 160;
+
+            // VCC Rail
+            ctx.strokeStyle = COLORS.vcc;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(leftX - 60, vccY);
+            ctx.lineTo(rightX + 60, vccY);
+            ctx.stroke();
+            drawBoldLabel(ctx, cx, vccY - 16, '+5V MOTOR', COLORS.vcc, 'center');
+
+            // GND Rail
+            ctx.strokeStyle = COLORS.gnd;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(leftX - 60, gndY);
+            ctx.lineTo(rightX + 60, gndY);
+            ctx.stroke();
+            drawBoldLabel(ctx, cx, gndY + 20, 'GND', COLORS.gnd, 'center');
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(cx - 15, gndY + 30); ctx.lineTo(cx + 15, gndY + 30); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx - 10, gndY + 35); ctx.lineTo(cx + 10, gndY + 35); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(cx - 5, gndY + 40); ctx.lineTo(cx + 5, gndY + 40); ctx.stroke();
+
+            // Transistors
+            drawTransistor(ctx, leftX, topQY, 'Q1', 'Col. Común');
+            drawTransistor(ctx, rightX, topQY, 'Q2', 'Col. Común');
+            drawTransistor(ctx, leftX, botQY, 'Q3', 'Em. Común');
+            drawTransistor(ctx, rightX, botQY, 'Q4', 'Em. Común');
+
+            // Q1: C→+5V, E→Motor A
+            drawWire(ctx, [[leftX + 8, topQY - 12], [leftX + 8, vccY]], COLORS.vcc, false);
+            drawNode(ctx, leftX + 8, vccY, COLORS.vcc);
+            drawWire(ctx, [[leftX + 8, topQY + 12], [leftX + 8, motorY - 30]], COLORS.wire, false);
+
+            // Q2: C→+5V, E→Motor B
+            drawWire(ctx, [[rightX + 8, topQY - 12], [rightX + 8, vccY]], COLORS.vcc, false);
+            drawNode(ctx, rightX + 8, vccY, COLORS.vcc);
+            drawWire(ctx, [[rightX + 8, topQY + 12], [rightX + 8, motorY - 30]], COLORS.wire, false);
+
+            // Q3: C→Motor A, E→GND
+            drawWire(ctx, [[leftX + 8, botQY - 12], [leftX + 8, motorY + 30]], COLORS.wire, false);
+            drawWire(ctx, [[leftX + 8, botQY + 12], [leftX + 8, gndY]], COLORS.gnd, false);
+            drawNode(ctx, leftX + 8, gndY, COLORS.gnd);
+
+            // Q4: C→Motor B, E→GND
+            drawWire(ctx, [[rightX + 8, botQY - 12], [rightX + 8, motorY + 30]], COLORS.wire, false);
+            drawWire(ctx, [[rightX + 8, botQY + 12], [rightX + 8, gndY]], COLORS.gnd, false);
+            drawNode(ctx, rightX + 8, gndY, COLORS.gnd);
+
+            // Motor
+            drawMotor(ctx, cx, motorY);
+            // Motor terminals
+            drawLabel(ctx, leftX + 8, motorY - 40, 'MA', COLORS.wire, 'center', '10');
+            drawLabel(ctx, rightX + 8, motorY - 40, 'MB', COLORS.wire, 'center', '10');
+            drawNode(ctx, leftX + 8, motorY - 30, COLORS.wire);
+            drawNode(ctx, rightX + 8, motorY - 30, COLORS.wire);
+            drawNode(ctx, leftX + 8, motorY + 30, COLORS.wire);
+            drawNode(ctx, rightX + 8, motorY + 30, COLORS.wire);
+
+            drawWire(ctx, [[cx - 22, motorY], [leftX + 8, motorY]], COLORS.wire, false);
+            drawWire(ctx, [[cx + 22, motorY], [rightX + 8, motorY]], COLORS.wire, false);
+
+            // Base resistors + input signals
+            const inFwdY = (topQY + botQY) / 2 - 30;
+            const inRevY = (topQY + botQY) / 2 + 30;
+
+            // IN_FWD label
+            drawBoldLabel(ctx, 60, inFwdY, 'IN_FWD', COLORS.wireGreen, 'left');
+            drawLabel(ctx, 60, inFwdY + 16, 'HT12D D9 · Pin 11', '#64748b', 'left', '9');
+
+            // IN_FWD → Q1 base
+            drawWire(ctx, [[130, inFwdY], [200, inFwdY]], COLORS.wireGreen, false);
+            drawNode(ctx, 200, inFwdY, COLORS.wireGreen);
+            drawWire(ctx, [[200, inFwdY], [200, topQY]], COLORS.wireGreen, false);
+            drawResistor(ctx, 200, topQY, leftX - 16, topQY, '1kΩ', '#fb923c');
+
+            // IN_FWD → Q4 base
+            drawWire(ctx, [[200, inFwdY], [200, botQY]], COLORS.wireGreen, false);
+            const q4bx = rightX - 16;
+            drawWire(ctx, [[200, botQY], [rightX - 60, botQY]], COLORS.wireGreen, false);
+            drawResistor(ctx, rightX - 60, botQY, q4bx, botQY, '1kΩ', '#fb923c');
+
+            // IN_REV label
+            drawBoldLabel(ctx, 60, inRevY, 'IN_REV', COLORS.wireRed, 'left');
+            drawLabel(ctx, 60, inRevY + 16, 'HT12D D10 · Pin 12', '#64748b', 'left', '9');
+
+            // IN_REV → Q2 base
+            drawWire(ctx, [[130, inRevY], [160, inRevY]], COLORS.wireRed, false);
+            drawNode(ctx, 160, inRevY, COLORS.wireRed);
+            drawWire(ctx, [[160, inRevY], [160, topQY], [rightX - 60, topQY]], COLORS.wireRed, false);
+            drawResistor(ctx, rightX - 60, topQY, rightX - 16, topQY, '1kΩ', '#fb923c');
+
+            // IN_REV → Q3 base
+            drawWire(ctx, [[160, inRevY], [160, botQY]], COLORS.wireRed, false);
+            drawWire(ctx, [[160, botQY], [leftX - 60, botQY]], COLORS.wireRed, false);
+            drawResistor(ctx, leftX - 60, botQY, leftX - 16, botQY, '1kΩ', '#fb923c');
+
+            // Flyback diodes
+            // D1: MA → +5V (left side)
+            const d1x = leftX - 40;
+            drawDiode(ctx, d1x, motorY - 30, d1x, vccY + 10, 'D1');
+            drawWire(ctx, [[leftX + 8, motorY - 30], [d1x, motorY - 30]], 'rgba(192,132,252,0.4)', false);
+            drawWire(ctx, [[d1x, vccY + 10], [d1x, vccY]], 'rgba(192,132,252,0.4)', false);
+            drawNode(ctx, d1x, vccY, COLORS.wirePurple);
+
+            // D2: GND → MA (left side)
+            const d2x = leftX + 56;
+            drawDiode(ctx, d2x, gndY - 10, d2x, motorY + 30, 'D2');
+            drawWire(ctx, [[d2x, gndY - 10], [d2x, gndY]], 'rgba(192,132,252,0.4)', false);
+            drawNode(ctx, d2x, gndY, COLORS.wirePurple);
+            drawWire(ctx, [[d2x, motorY + 30], [leftX + 8, motorY + 30]], 'rgba(192,132,252,0.4)', false);
+
+            // D3: MB → +5V (right side)
+            const d3x = rightX + 56;
+            drawDiode(ctx, d3x, motorY - 30, d3x, vccY + 10, 'D3');
+            drawWire(ctx, [[rightX + 8, motorY - 30], [d3x, motorY - 30]], 'rgba(192,132,252,0.4)', false);
+            drawWire(ctx, [[d3x, vccY + 10], [d3x, vccY]], 'rgba(192,132,252,0.4)', false);
+            drawNode(ctx, d3x, vccY, COLORS.wirePurple);
+
+            // D4: GND → MB (right side)
+            const d4x = rightX - 40;
+            drawDiode(ctx, d4x, gndY - 10, d4x, motorY + 30, 'D4');
+            drawWire(ctx, [[d4x, gndY - 10], [d4x, gndY]], 'rgba(192,132,252,0.4)', false);
+            drawNode(ctx, d4x, gndY, COLORS.wirePurple);
+            drawWire(ctx, [[d4x, motorY + 30], [rightX + 8, motorY + 30]], 'rgba(192,132,252,0.4)', false);
+
+            // Legend
+            ctx.fillStyle = COLORS.note;
+            roundRect(ctx, 830, 80, 240, 160, 8);
+            ctx.fill();
+            ctx.strokeStyle = 'rgba(56,189,248,0.1)';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
+            drawBoldLabel(ctx, 850, 105, 'LEYENDA', COLORS.chipLabel, 'left');
+            // Green wire sample
+            drawWire(ctx, [[850, 130], [880, 130]], COLORS.wireGreen, false);
+            drawLabel(ctx, 890, 130, 'IN_FWD (Q1 + Q4)', COLORS.wireGreen, 'left', '10');
+            // Red wire sample
+            drawWire(ctx, [[850, 155], [880, 155]], COLORS.wireRed, false);
+            drawLabel(ctx, 890, 155, 'IN_REV (Q2 + Q3)', COLORS.wireRed, 'left', '10');
+            // Purple diode
+            drawWire(ctx, [[850, 180], [880, 180]], COLORS.wirePurple, false);
+            drawLabel(ctx, 890, 180, 'Diodos flyback', COLORS.wirePurple, 'left', '10');
+            // VCC
+            drawWire(ctx, [[850, 205], [880, 205]], COLORS.vcc, false);
+            drawLabel(ctx, 890, 205, '+5V / GND', COLORS.vcc, 'left', '10');
+
+            // Current flow note
+            ctx.fillStyle = COLORS.note;
+            roundRect(ctx, 830, 260, 240, 100, 8);
+            ctx.fill();
+            drawBoldLabel(ctx, 850, 285, 'FLUJO DE CORRIENTE', '#34d399', 'left');
+            drawLabel(ctx, 850, 305, 'FWD: +5V → Q1 → MA → M → MB → Q4 → GND', '#94a3b8', 'left', '9');
+            drawLabel(ctx, 850, 325, 'REV: +5V → Q2 → MB → M → MA → Q3 → GND', '#94a3b8', 'left', '9');
+            drawLabel(ctx, 850, 345, 'VCE_sat ≈ 0.7V  →  Motor ≈ 3.6V neto', '#fbbf24', 'left', '9');
+        })();
+
+    })();
+    </script>
+
+    <!-- Components JS -->
+    <script src="../js/components.js"></script>
+    <script src="../js/main.js"></script>
+</body>
+
+</html>

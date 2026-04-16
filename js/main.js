@@ -125,7 +125,19 @@ const topics = [
         date: "14/ABR/2026 7:00 AM",
         icon: "ph-bug",
         link: "topics/topic-11.html"
-    }
+    }, 
+    {
+        id: 12,
+        title: "12. Circuito RF por HT12E y HT12D",
+        description: "Aprenderás a diseñar y construir un circuito de comunicación inalámbrica utilizando los codificadores HT12E y HT12D junto con módulos RF de 433 MHz.",
+        category: "proyecto",
+        level: "Básico",
+        color: "purple",
+        date: "21/ABR/2026 7:00 AM",
+        icon: "ph-rocket-launcher",
+        link: "topics/topic-12.html"
+    },
+
     // Más temas pueden ser añadidos aquí
 ];
 
