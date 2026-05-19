@@ -148,6 +148,17 @@ const topics = [
         icon: "ph-trophy",
         link: "topics/topic-13.html"
     },
+    {
+        id: 14,
+        title: "14. Práctica Final de Electrónica: Multivibrador Astable",
+        description: "Construye dos versiones del clásico circuito intermitente con LEDs: una con transistores discretos y otra con el integrado NE555. Incluye esquemas y montajes interactivos.",
+        category: "practica",
+        level: "Final",
+        color: "purple",
+        date: "19/MAY/2026 7:00 AM",
+        icon: "ph-wave-square",
+        link: "topics/topic-14.html"
+    },
 
     // Más temas pueden ser añadidos aquí
 ];

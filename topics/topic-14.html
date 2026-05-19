@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - Lección 14: Multivibrador Astable con Transistores y con 555">
+    <meta name="keywords" content="Electrónica, Multivibrador Astable, Transistor 2N2222, NE555, Intermitente, LED, Práctica Final">
+    <title>RoboLab - Lección 14: Multivibrador Astable (Transistores y 555)</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .canvas-container {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            background: #080C14;
+            border: 1px solid rgba(56, 189, 248, 0.15);
+        }
+        .canvas-container canvas {
+            display: block;
+            width: 100%;
+            height: auto;
+        }
+        .glow-line {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #38bdf8, #c084fc, transparent);
+            border-radius: 1px;
+        }
+        .component-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: rgba(56, 189, 248, 0.08);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+        .question-card {
+            transition: border-color 200ms ease, background 200ms ease;
+        }
+        .question-card:hover {
+            border-color: rgba(192, 132, 252, 0.4);
+            background: rgba(192, 132, 252, 0.05);
+        }
+        .formula-box {
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1rem;
+            color: #e2e8f0;
+            font-size: 0.9rem;
+        }
+        .step-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 9999px;
+            background: linear-gradient(135deg, #38bdf8, #c084fc);
+            color: #0B0F19;
+            font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                        PRÁCTICA FINAL DE ELECTRÓNICA
+                    </span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1">
+                        <i class="ph ph-calendar"></i> 19 de Mayo 2026
+                    </span>
+                </div>
+
+                <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+                    Multivibrador Astable: Intermitente con LEDs
+                </h1>
+
+                <p class="text-xl text-slate-400">
+                    Dos prácticas finales que generan el mismo efecto —dos LEDs parpadeando alternadamente— con dos enfoques distintos:
+                    uno con transistores discretos y otro con el circuito integrado <strong class="text-white">NE555</strong>.
+                    Aprenderás a montar, medir y comparar ambos circuitos.
+                </p>
+            </div>
+
+            <!-- Aviso obligatorio -->
+            <div class="p-5 bg-red-500/5 border border-red-500/30 rounded-xl flex gap-4 mb-12">
+                <i class="ph ph-warning-circle text-red-400 text-2xl flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h5 class="text-red-300 font-bold text-base mb-1">Entrega obligatoria</h5>
+                    <p class="text-sm text-red-100/80 leading-relaxed">
+                        Para acreditar la materia se debe entregar la <strong>práctica final de electrónica</strong> completa
+                        (las dos prácticas presentadas en esta lección) junto con el robot del proyecto final.
+                        Ambos entregables son indispensables.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Introducción teórica -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                    <i class="ph ph-lightbulb-filament text-yellow-400"></i> ¿Qué es un Multivibrador Astable?
+                </h2>
+                <p class="text-slate-300 leading-relaxed mb-4">
+                    Un <strong class="text-white">multivibrador astable</strong> es un circuito que genera una señal cuadrada
+                    de forma continua, sin necesidad de pulso externo. No tiene estados estables: oscila entre <span class="text-neon-blue font-mono">HIGH</span>
+                    y <span class="text-neon-green font-mono">LOW</span> de manera indefinida mientras tenga alimentación.
+                </p>
+                <p class="text-slate-300 leading-relaxed mb-4">
+                    Es la base de muchos circuitos prácticos: luces intermitentes, generadores de tono, relojes para circuitos digitales,
+                    moduladores PWM y, en general, cualquier sistema que necesite una <em>base de tiempo</em>.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="glass-panel p-5 rounded-2xl">
+                        <i class="ph ph-clock text-2xl text-neon-blue mb-2"></i>
+                        <h4 class="font-bold text-white mb-1">Frecuencia</h4>
+                        <p class="text-sm text-slate-400">Determinada por los componentes RC (resistencia y capacitor) del circuito.</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl">
+                        <i class="ph ph-wave-square text-2xl text-neon-green mb-2"></i>
+                        <h4 class="font-bold text-white mb-1">Forma de Onda</h4>
+                        <p class="text-sm text-slate-400">Señal cuadrada con dos niveles de tensión bien definidos.</p>
+                    </div>
+                    <div class="glass-panel p-5 rounded-2xl">
+                        <i class="ph ph-arrows-clockwise text-2xl text-neon-purple mb-2"></i>
+                        <h4 class="font-bold text-white mb-1">Auto-oscilante</h4>
+                        <p class="text-sm text-slate-400">No requiere disparo externo: se realimenta a sí mismo.</p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="glow-line mb-12"></div>
+
+            <!-- ═══════════════════ PRÁCTICA FINAL 1 ═══════════════════ -->
+            <section class="mb-20">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge">1</div>
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-white">Práctica Final 1 — Intermitente con Transistores</h2>
+                        <p class="text-slate-400 mt-1">Multivibrador astable construido con dos transistores NPN.</p>
+                    </div>
+                </div>
+
+                <!-- Teoría -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="ph ph-book-open text-neon-blue"></i> Fundamento
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed mb-3">
+                        Este circuito utiliza dos transistores NPN (2N2222, BC547 o similares) acoplados de forma cruzada
+                        mediante dos capacitores electrolíticos. Cuando uno de los transistores conduce, el otro está en corte,
+                        y viceversa. El capacitor se carga lentamente a través de la resistencia de base hasta que su tensión
+                        alcanza ≈0.7V (umbral V<sub>BE</sub>) y conmuta el estado de los transistores.
+                    </p>
+                    <p class="text-slate-300 leading-relaxed">
+                        El resultado es que los dos LEDs <strong class="text-white">se encienden alternadamente</strong>
+                        con un período controlado por los valores de R y C.
+                    </p>
+                </div>
+
+                <!-- Componentes -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="ph ph-list-checks text-neon-green"></i> Lista de Componentes
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Fuente</span>
+                            <span class="component-pill self-start">5V (o 4×AAA)</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Transistores</span>
+                            <span class="component-pill self-start">2× NPN 2N2222</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">LEDs</span>
+                            <span class="component-pill self-start">2× LED rojo</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Resistencias</span>
+                            <span class="component-pill self-start">2× 220Ω</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Resistencias</span>
+                            <span class="component-pill self-start">2× 10kΩ</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Capacitores</span>
+                            <span class="component-pill self-start">2× 470µF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Esquemático -->
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="ph ph-circuitry text-neon-blue"></i> Diagrama Esquemático
+                </h3>
+                <p class="text-slate-400 text-sm mb-3">
+                    Monta el siguiente circuito. Los capacitores 470µF deben respetar su polaridad (el negativo del capacitor
+                    de la izquierda va a la <strong class="text-white">base</strong> del transistor derecho, y viceversa).
+                </p>
+                <div class="canvas-container mb-6">
+                    <canvas id="canvasAstableSchema" width="900" height="520"></canvas>
+                </div>
+
+                <!-- Protoboard -->
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="ph ph-grid-four text-neon-purple"></i> Montaje en Protoboard
+                </h3>
+                <p class="text-slate-400 text-sm mb-3">
+                    Esta es una vista sugerida del montaje físico. La batería de 4 pilas AAA proporciona aproximadamente
+                    6V (totalmente compatible con el circuito).
+                </p>
+                <div class="canvas-container mb-6">
+                    <canvas id="canvasAstableBreadboard" width="900" height="460"></canvas>
+                </div>
+
+                <!-- Funcionamiento -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="ph ph-gear-fine text-yellow-400"></i> ¿Cómo Funciona Paso a Paso?
+                    </h3>
+                    <ol class="space-y-3 text-sm text-slate-300">
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-blue flex-shrink-0">1.</span>
+                            <span>Al conectar la alimentación, uno de los transistores entra primero en saturación (por mínimas diferencias de fabricación). Supongamos que es Q1.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-blue flex-shrink-0">2.</span>
+                            <span>Q1 conduce → LED1 enciende. Su colector cae a ≈0V, lo que <strong class="text-white">descarga</strong> el capacitor C1 y mantiene la base de Q2 negativa, manteniéndolo en corte.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-blue flex-shrink-0">3.</span>
+                            <span>C1 comienza a cargarse a través de R3 (10kΩ) hasta que la tensión en la base de Q2 alcanza +0.7V.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-blue flex-shrink-0">4.</span>
+                            <span>Q2 entra en saturación → LED2 enciende, Q1 queda en corte → LED1 se apaga. El proceso se invierte.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-blue flex-shrink-0">5.</span>
+                            <span>El ciclo se repite indefinidamente: <strong class="text-white">LED1 → LED2 → LED1 → LED2…</strong></span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Fórmula tiempo -->
+                <div class="p-5 bg-blue-500/5 border border-blue-500/20 rounded-xl mb-6">
+                    <h4 class="text-neon-blue font-bold mb-2 flex items-center gap-2">
+                        <i class="ph ph-function"></i> Tiempo de Encendido por LED
+                    </h4>
+                    <div class="formula-box mb-2">
+                        T<sub>on</sub> ≈ 0.693 × R × C
+                    </div>
+                    <p class="text-sm text-blue-200/70">
+                        Con R = 10 kΩ y C = 470 µF →
+                        T<sub>on</sub> ≈ 0.693 × 10 000 × 0.000 470 ≈ <strong class="text-white">3.26 s por LED</strong>
+                        (período total ≈ 6.5 s).
+                    </p>
+                </div>
+
+                <!-- Preguntas -->
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="ph ph-question text-neon-purple"></i> Preguntas a Responder
+                </h3>
+                <div class="space-y-3">
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">a) ¿Qué ocurre al conectar el circuito?</h5>
+                        <p class="text-sm text-slate-400">Describe con tus propias palabras lo que ves: ¿qué LEDs se encienden y en qué orden?</p>
+                    </div>
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">b) ¿Cuánto tiempo está encendido cada LED?</h5>
+                        <p class="text-sm text-slate-400">Cronometra el tiempo aproximado de encendido de uno de los LEDs y compáralo con el valor teórico.</p>
+                    </div>
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">c) ¿Cómo puede cambiarse ese tiempo?</h5>
+                        <p class="text-sm text-slate-400">
+                            Pista: T = 0.693 · R · C. Si aumentas el valor de R o de C, ¿el LED estará encendido más tiempo o menos?
+                            Experimenta cambiando una resistencia de 10kΩ por una de 22kΩ o un capacitor de 470µF por uno de 220µF.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="glow-line mb-12"></div>
+
+            <!-- ═══════════════════ PRÁCTICA FINAL 2 ═══════════════════ -->
+            <section class="mb-16">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="step-badge" style="background: linear-gradient(135deg, #c084fc, #f472b6);">2</div>
+                    <div>
+                        <h2 class="font-display text-3xl font-bold text-white">Práctica Final 2 — Intermitente con NE555</h2>
+                        <p class="text-slate-400 mt-1">El mismo intermitente, pero usando un circuito integrado temporizador.</p>
+                    </div>
+                </div>
+
+                <!-- Teoría -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="ph ph-cpu text-neon-purple"></i> El Circuito Integrado NE555
+                    </h3>
+                    <p class="text-slate-300 leading-relaxed mb-3">
+                        El <strong class="text-white">555</strong> es uno de los CI más famosos de la electrónica. Fabricado desde 1971,
+                        encapsula internamente comparadores, un flip-flop y un transistor de descarga, todo en un encapsulado
+                        DIP de 8 pines. Configurado en modo <strong class="text-white">astable</strong>, hace exactamente lo mismo
+                        que la práctica anterior pero con menos componentes y un comportamiento mucho más estable.
+                    </p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 1</p>
+                            <p class="text-sm text-white font-mono">GND</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 2</p>
+                            <p class="text-sm text-white font-mono">TRIGGER (disparo)</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 3</p>
+                            <p class="text-sm text-white font-mono">OUTPUT (salida)</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 4</p>
+                            <p class="text-sm text-white font-mono">RESET</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 5</p>
+                            <p class="text-sm text-white font-mono">CONTROL</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 6</p>
+                            <p class="text-sm text-white font-mono">THRESHOLD (umbral)</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 7</p>
+                            <p class="text-sm text-white font-mono">DISCHARGE (descarga)</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                            <p class="text-xs text-slate-500 mb-1">Pin 8</p>
+                            <p class="text-sm text-white font-mono">VCC (+5V)</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 p-3 bg-yellow-500/5 border border-yellow-500/20 rounded-lg flex gap-3">
+                        <i class="ph ph-warning text-yellow-400 flex-shrink-0 mt-0.5"></i>
+                        <p class="text-sm text-yellow-200/80">
+                            Al montar el 555, fíjate bien en la <strong>numeración real</strong> de los pines.
+                            El pin 1 se identifica por la <strong>muesca</strong> o el <strong>punto</strong> impreso sobre el encapsulado.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Componentes -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="ph ph-list-checks text-neon-green"></i> Lista de Componentes
+                    </h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Fuente</span>
+                            <span class="component-pill self-start">5V (o 4×AAA)</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Integrado</span>
+                            <span class="component-pill self-start">1× NE555</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">LEDs</span>
+                            <span class="component-pill self-start">2× LED rojo</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">R<sub>A</sub></span>
+                            <span class="component-pill self-start">1× 1kΩ</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">R<sub>B</sub></span>
+                            <span class="component-pill self-start">1× 47kΩ</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Limitadores</span>
+                            <span class="component-pill self-start">2× 220Ω</span>
+                        </div>
+                        <div class="flex flex-col gap-1 p-3 rounded-lg bg-white/5 border border-white/5">
+                            <span class="text-xs text-slate-500">Capacitor</span>
+                            <span class="component-pill self-start">1× 100µF</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Esquemático -->
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="ph ph-circuitry text-neon-purple"></i> Diagrama Esquemático
+                </h3>
+                <p class="text-slate-400 text-sm mb-3">
+                    Configuración astable estándar del 555. Observa que el pin 2 (TRIGGER) y pin 6 (THRESHOLD) están unidos:
+                    es lo que vuelve al circuito auto-oscilante. La salida (pin 3) alimenta dos LEDs en configuración complementaria
+                    para que parpadeen alternadamente.
+                </p>
+                <div class="canvas-container mb-6">
+                    <canvas id="canvas555Schema" width="900" height="540"></canvas>
+                </div>
+
+                <!-- Protoboard -->
+                <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                    <i class="ph ph-grid-four text-neon-purple"></i> Montaje en Protoboard
+                </h3>
+                <p class="text-slate-400 text-sm mb-3">
+                    El 555 se monta a caballo sobre el canal central del protoboard, de forma que los 4 pines de cada lado queden
+                    en filas separadas. Recuerda identificar el pin 1 (muesca / punto).
+                </p>
+                <div class="canvas-container mb-6">
+                    <canvas id="canvas555Breadboard" width="900" height="460"></canvas>
+                </div>
+
+                <!-- Funcionamiento -->
+                <div class="glass-panel p-6 rounded-2xl mb-6">
+                    <h3 class="text-xl font-bold text-white mb-3 flex items-center gap-2">
+                        <i class="ph ph-gear-fine text-yellow-400"></i> ¿Cómo Funciona?
+                    </h3>
+                    <ol class="space-y-3 text-sm text-slate-300">
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-purple flex-shrink-0">1.</span>
+                            <span>El capacitor C (100µF) comienza vacío. Se carga a través de R<sub>A</sub> + R<sub>B</sub> (1kΩ + 47kΩ).</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-purple flex-shrink-0">2.</span>
+                            <span>Cuando la tensión en C alcanza <strong class="text-white">2/3 V<sub>CC</sub></strong>, el comparador superior activa el flip-flop interno y la salida pasa a LOW. El pin 7 se conecta a GND y descarga el capacitor a través de R<sub>B</sub>.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-purple flex-shrink-0">3.</span>
+                            <span>Cuando la tensión cae a <strong class="text-white">1/3 V<sub>CC</sub></strong>, el comparador inferior reinicia el flip-flop y la salida vuelve a HIGH. El ciclo se repite.</span>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="font-bold text-neon-purple flex-shrink-0">4.</span>
+                            <span>La salida (pin 3) oscila entre 0V y ≈V<sub>CC</sub>. Conectando dos LEDs en sentido opuesto, uno se enciende cuando el otro está apagado.</span>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- Fórmulas -->
+                <div class="p-5 bg-purple-500/5 border border-purple-500/20 rounded-xl mb-6">
+                    <h4 class="text-neon-purple font-bold mb-3 flex items-center gap-2">
+                        <i class="ph ph-function"></i> Fórmulas del 555 Astable
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <p class="text-xs text-slate-500 mb-1">Tiempo en HIGH</p>
+                            <div class="formula-box">t<sub>H</sub> = 0.693·(R<sub>A</sub>+R<sub>B</sub>)·C</div>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 mb-1">Tiempo en LOW</p>
+                            <div class="formula-box">t<sub>L</sub> = 0.693·R<sub>B</sub>·C</div>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-500 mb-1">Frecuencia</p>
+                            <div class="formula-box">f = 1.44 / ((R<sub>A</sub>+2R<sub>B</sub>)·C)</div>
+                        </div>
+                    </div>
+                    <p class="text-sm text-purple-200/70 mt-3">
+                        Con R<sub>A</sub>=1kΩ, R<sub>B</sub>=47kΩ y C=100µF:
+                        f ≈ 1.44 / ((1k+94k)·100µF) ≈ <strong class="text-white">0.15 Hz</strong>
+                        → un ciclo cada ≈ 6.6 segundos.
+                    </p>
+                </div>
+
+                <!-- Preguntas -->
+                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    <i class="ph ph-question text-neon-purple"></i> Preguntas a Responder
+                </h3>
+                <div class="space-y-3">
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">a) Conecta la corriente, ¿qué ocurre?</h5>
+                        <p class="text-sm text-slate-400">Describe la secuencia de los LEDs. ¿Es similar al circuito de la práctica anterior?</p>
+                    </div>
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">b) ¿Qué ventajas le ves a este circuito respecto al anterior?</h5>
+                        <p class="text-sm text-slate-400">Piensa en número de componentes, estabilidad, consumo, fiabilidad y reproducibilidad del montaje.</p>
+                    </div>
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">c) ¿Qué inconvenientes tiene respecto al circuito anterior?</h5>
+                        <p class="text-sm text-slate-400">¿Es más fácil de entender desde cero? ¿Requiere conocimientos previos del integrado?</p>
+                    </div>
+                    <div class="question-card p-5 rounded-xl border border-white/10 bg-white/5">
+                        <h5 class="font-bold text-white mb-2">d) Aplicando la ley de la práctica 7 (Ley de Ohm) y las fórmulas RC, ¿cómo cambiarías el tiempo de intermitencia?</h5>
+                        <p class="text-sm text-slate-400">
+                            Recuerda: t<sub>H</sub> = 0.693·(R<sub>A</sub>+R<sub>B</sub>)·C. Si quieres parpadeo más lento, ¿aumentas o disminuyes R y C?
+                            Prueba a sustituir el capacitor de 100µF por uno de 220µF y mide el cambio.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <div class="glow-line mb-12"></div>
+
+            <!-- Comparativa final -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-4 flex items-center gap-3">
+                    <i class="ph ph-scales text-neon-blue"></i> Comparativa: Transistores vs. NE555
+                </h2>
+                <div class="glass-panel rounded-2xl overflow-hidden border border-white/10">
+                    <table class="w-full text-sm">
+                        <thead class="bg-white/5 border-b border-white/10">
+                            <tr>
+                                <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-3">Aspecto</th>
+                                <th class="text-left text-xs font-semibold text-cyan-300 uppercase tracking-wider px-6 py-3">Transistores</th>
+                                <th class="text-left text-xs font-semibold text-purple-300 uppercase tracking-wider px-6 py-3">NE555</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr><td class="px-6 py-3 text-slate-200 font-medium">Nº de componentes</td><td class="px-6 py-3 text-slate-400">8 (2 TR + 2 LED + 2 R + 2 C)</td><td class="px-6 py-3 text-slate-400">6 (CI + 2 LED + 2 R + 1 C)</td></tr>
+                            <tr><td class="px-6 py-3 text-slate-200 font-medium">Estabilidad</td><td class="px-6 py-3 text-slate-400">Dependiente de hFE y temperatura</td><td class="px-6 py-3 text-slate-400">Muy estable, independiente de V<sub>CC</sub></td></tr>
+                            <tr><td class="px-6 py-3 text-slate-200 font-medium">Valor pedagógico</td><td class="px-6 py-3 text-slate-400">Excelente — se ve "cómo funciona"</td><td class="px-6 py-3 text-slate-400">Caja negra — hay que confiar en el CI</td></tr>
+                            <tr><td class="px-6 py-3 text-slate-200 font-medium">Frecuencia máxima</td><td class="px-6 py-3 text-slate-400">~kHz (limitado por TR)</td><td class="px-6 py-3 text-slate-400">~MHz</td></tr>
+                            <tr><td class="px-6 py-3 text-slate-200 font-medium">Coste</td><td class="px-6 py-3 text-slate-400">Bajo (componentes discretos)</td><td class="px-6 py-3 text-slate-400">Muy bajo (CI &lt; 10¢)</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center pt-8 border-t border-white/10">
+                <a href="topic-13.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>Tema Anterior</span>
+                </a>
+                <a href="../index.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <span>Volver al inicio</span>
+                    <i class="ph ph-house"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Canvas Drawing Scripts -->
+    <script>
+    (function () {
+        const DPR = window.devicePixelRatio || 1;
+        const COLORS = {
+            bg: '#080C14',
+            grid: 'rgba(56,189,248,0.05)',
+            wire: '#38bdf8',
+            wireRed: '#f87171',
+            wireBlack: '#94a3b8',
+            wireOrange: '#fb923c',
+            wirePink: '#f472b6',
+            wireBrown: '#a78bfa',
+            text: '#e2e8f0',
+            sub: '#94a3b8',
+            res: '#fb923c',
+            cap: '#34d399',
+            led: '#f87171',
+            tr: '#c084fc',
+            ic: '#1e293b',
+            icBorder: '#475569',
+            vcc: '#f87171',
+            gnd: '#64748b',
+            board: '#dde3eb',
+            boardLine: '#9ca3af',
+            holeOff: '#cbd5e1',
+            railRed: '#fca5a5',
+            railBlue: '#93c5fd',
+            battery: '#1f2937'
+        };
+
+        // ─── Canvas helpers ──────────────────────────────────────
+        function setup(id) {
+            const c = document.getElementById(id);
+            if (!c) return null;
+            const w = c.width, h = c.height;
+            c.width = w * DPR; c.height = h * DPR;
+            c.style.width = w + 'px'; c.style.height = h + 'px';
+            const ctx = c.getContext('2d');
+            ctx.scale(DPR, DPR);
+            return { ctx, w, h };
+        }
+
+        function bg(ctx, w, h) {
+            ctx.fillStyle = COLORS.bg; ctx.fillRect(0, 0, w, h);
+            ctx.strokeStyle = COLORS.grid; ctx.lineWidth = 0.5;
+            for (let x = 0; x < w; x += 20) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); }
+            for (let y = 0; y < h; y += 20) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); }
+        }
+
+        function wire(ctx, pts, color, width) {
+            ctx.strokeStyle = color || COLORS.wire;
+            ctx.lineWidth = width || 2;
+            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(pts[0][0], pts[0][1]);
+            for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+            ctx.stroke();
+        }
+
+        function node(ctx, x, y, color) {
+            ctx.fillStyle = color || COLORS.wire;
+            ctx.beginPath(); ctx.arc(x, y, 3.5, 0, Math.PI * 2); ctx.fill();
+        }
+
+        function label(ctx, x, y, text, color, align, size, weight) {
+            ctx.fillStyle = color || COLORS.text;
+            ctx.font = (weight || '500') + ' ' + (size || 12) + 'px "Inter", sans-serif';
+            ctx.textAlign = align || 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+
+        function mono(ctx, x, y, text, color, align, size) {
+            ctx.fillStyle = color || COLORS.text;
+            ctx.font = (size || 10) + 'px "JetBrains Mono", monospace';
+            ctx.textAlign = align || 'left';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(text, x, y);
+        }
+
+        // ─── Schematic symbols ──────────────────────────────────
+        // Resistor (horizontal or vertical)
+        function resistor(ctx, x1, y1, x2, y2, lbl) {
+            const dx = x2 - x1, dy = y2 - y1;
+            const len = Math.hypot(dx, dy);
+            const ux = dx / len, uy = dy / len;
+            const px = -uy, py = ux;
+            const pad = (len - 40) / 2;
+            ctx.strokeStyle = COLORS.res;
+            ctx.lineWidth = 2;
+            // leads
+            ctx.beginPath();
+            ctx.moveTo(x1, y1); ctx.lineTo(x1 + ux * pad, y1 + uy * pad);
+            ctx.moveTo(x2 - ux * pad, y2 - uy * pad); ctx.lineTo(x2, y2);
+            ctx.stroke();
+            // zigzag
+            ctx.beginPath();
+            const start = [x1 + ux * pad, y1 + uy * pad];
+            ctx.moveTo(start[0], start[1]);
+            const seg = 40 / 6;
+            for (let i = 1; i <= 6; i++) {
+                const cx = start[0] + ux * seg * i;
+                const cy = start[1] + uy * seg * i;
+                const side = (i % 2 === 1) ? 6 : -6;
+                ctx.lineTo(cx + px * side, cy + py * side);
+            }
+            ctx.lineTo(x2 - ux * pad, y2 - uy * pad);
+            ctx.stroke();
+            if (lbl) {
+                const mx = (x1 + x2) / 2 + px * 16;
+                const my = (y1 + y2) / 2 + py * 16;
+                mono(ctx, mx, my, lbl, COLORS.res, 'center', 11);
+            }
+        }
+
+        // Polarized capacitor: x,y = center, vert = true if vertical
+        function capPolar(ctx, x, y, vert, lbl) {
+            ctx.strokeStyle = COLORS.cap;
+            ctx.lineWidth = 2.5;
+            if (vert) {
+                // top lead
+                ctx.beginPath(); ctx.moveTo(x, y - 18); ctx.lineTo(x, y - 5); ctx.stroke();
+                // straight plate (positive)
+                ctx.beginPath(); ctx.moveTo(x - 14, y - 5); ctx.lineTo(x + 14, y - 5); ctx.stroke();
+                // curved plate (negative)
+                ctx.beginPath(); ctx.arc(x, y + 18, 18, Math.PI + 0.3, -0.3, false); ctx.stroke();
+                // bottom lead
+                ctx.beginPath(); ctx.moveTo(x, y + 5); ctx.lineTo(x, y + 18); ctx.stroke();
+                // + sign
+                label(ctx, x - 18, y - 9, '+', COLORS.cap, 'right', 11, '700');
+                if (lbl) mono(ctx, x + 18, y, lbl, COLORS.cap, 'left', 11);
+            } else {
+                ctx.beginPath(); ctx.moveTo(x - 18, y); ctx.lineTo(x - 5, y); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x - 5, y - 14); ctx.lineTo(x - 5, y + 14); ctx.stroke();
+                ctx.beginPath(); ctx.arc(x + 18, y, 18, Math.PI / 2 + 0.3, -Math.PI / 2 - 0.3, true); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x + 5, y); ctx.lineTo(x + 18, y); ctx.stroke();
+                label(ctx, x - 9, y - 18, '+', COLORS.cap, 'left', 11, '700');
+                if (lbl) mono(ctx, x, y + 22, lbl, COLORS.cap, 'center', 11);
+            }
+        }
+
+        // LED schematic symbol, pointing direction: 'down' or 'up'
+        function led(ctx, x, y, dir, lbl) {
+            ctx.strokeStyle = COLORS.led; ctx.fillStyle = COLORS.led;
+            ctx.lineWidth = 2;
+            const up = dir === 'up';
+            // leads
+            ctx.beginPath();
+            ctx.moveTo(x, y - 22); ctx.lineTo(x, y - 12);
+            ctx.moveTo(x, y + 12); ctx.lineTo(x, y + 22);
+            ctx.stroke();
+            // triangle
+            ctx.beginPath();
+            if (up) {
+                ctx.moveTo(x, y - 12); ctx.lineTo(x - 8, y + 8); ctx.lineTo(x + 8, y + 8);
+            } else {
+                ctx.moveTo(x, y + 12); ctx.lineTo(x - 8, y - 8); ctx.lineTo(x + 8, y - 8);
+            }
+            ctx.closePath(); ctx.fill();
+            // bar (cathode)
+            ctx.beginPath();
+            if (up) { ctx.moveTo(x - 8, y - 12); ctx.lineTo(x + 8, y - 12); }
+            else    { ctx.moveTo(x - 8, y + 12); ctx.lineTo(x + 8, y + 12); }
+            ctx.stroke();
+            // light arrows
+            ctx.strokeStyle = COLORS.led;
+            ctx.lineWidth = 1.2;
+            for (let i = 0; i < 2; i++) {
+                ctx.beginPath();
+                ctx.moveTo(x + 10 + i * 4, y - 4 + i * 2);
+                ctx.lineTo(x + 18 + i * 4, y - 12 + i * 2);
+                ctx.stroke();
+                // arrowhead
+                ctx.beginPath();
+                ctx.moveTo(x + 18 + i * 4, y - 12 + i * 2);
+                ctx.lineTo(x + 16 + i * 4, y - 8 + i * 2);
+                ctx.moveTo(x + 18 + i * 4, y - 12 + i * 2);
+                ctx.lineTo(x + 14 + i * 4, y - 10 + i * 2);
+                ctx.stroke();
+            }
+            if (lbl) mono(ctx, x - 12, y, lbl, COLORS.led, 'right', 10);
+        }
+
+        // NPN transistor: emitter at bottom, base on left, collector at top
+        function npn(ctx, x, y, lbl) {
+            const r = 18;
+            ctx.strokeStyle = COLORS.tr;
+            ctx.fillStyle = 'rgba(192,132,252,0.05)';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            // base line (left horizontal to vertical bar)
+            ctx.strokeStyle = COLORS.tr; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.moveTo(x - r, y); ctx.lineTo(x - 6, y); ctx.stroke();
+            // vertical bar
+            ctx.beginPath(); ctx.moveTo(x - 6, y - 9); ctx.lineTo(x - 6, y + 9); ctx.stroke();
+            // collector (top right)
+            ctx.beginPath(); ctx.moveTo(x - 6, y - 5); ctx.lineTo(x + 8, y - 14); ctx.lineTo(x + 8, y - r); ctx.stroke();
+            // emitter (bottom right) with arrow
+            ctx.beginPath(); ctx.moveTo(x - 6, y + 5); ctx.lineTo(x + 8, y + 14); ctx.lineTo(x + 8, y + r); ctx.stroke();
+            // arrowhead
+            ctx.fillStyle = COLORS.tr;
+            ctx.beginPath();
+            ctx.moveTo(x + 8, y + 14);
+            ctx.lineTo(x + 3, y + 9);
+            ctx.lineTo(x + 4, y + 14);
+            ctx.closePath(); ctx.fill();
+            if (lbl) mono(ctx, x + r + 6, y + r + 4, lbl, COLORS.tr, 'left', 10);
+        }
+
+        // GND symbol
+        function gnd(ctx, x, y) {
+            ctx.strokeStyle = COLORS.gnd; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x - 10, y); ctx.lineTo(x + 10, y);
+            ctx.moveTo(x - 7, y + 4); ctx.lineTo(x + 7, y + 4);
+            ctx.moveTo(x - 4, y + 8); ctx.lineTo(x + 4, y + 8);
+            ctx.stroke();
+            // stem
+            ctx.beginPath(); ctx.moveTo(x, y - 8); ctx.lineTo(x, y); ctx.stroke();
+        }
+
+        // VCC arrow
+        function vcc(ctx, x, y, label_text) {
+            ctx.strokeStyle = COLORS.vcc; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(x, y); ctx.lineTo(x, y - 10);
+            ctx.moveTo(x - 6, y - 6); ctx.lineTo(x, y - 12); ctx.lineTo(x + 6, y - 6);
+            ctx.stroke();
+            mono(ctx, x, y - 22, label_text || '+5V', COLORS.vcc, 'center', 11);
+        }
+
+        // 555 chip (DIP-8)
+        function ic555(ctx, x, y) {
+            const w = 130, h = 110;
+            ctx.fillStyle = COLORS.ic;
+            ctx.strokeStyle = COLORS.icBorder;
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, 6);
+            ctx.fill(); ctx.stroke();
+            // notch
+            ctx.fillStyle = COLORS.bg;
+            ctx.beginPath(); ctx.arc(x + w / 2, y, 5, 0, Math.PI); ctx.fill();
+            ctx.strokeStyle = COLORS.icBorder; ctx.stroke();
+            // label
+            label(ctx, x + w / 2, y + h / 2 - 8, 'NE555', '#e2e8f0', 'center', 16, '700');
+            label(ctx, x + w / 2, y + h / 2 + 10, 'DIP-8', COLORS.sub, 'center', 10, '400');
+            // pin coords
+            const px = 24;
+            const pinL = [];
+            const pinR = [];
+            const pinSpacing = h / 5;
+            for (let i = 0; i < 4; i++) {
+                const py = y + pinSpacing * (i + 1);
+                pinL.push([x - 8, py]);
+                pinR.push([x + w + 8, py]);
+                // small pin rect
+                ctx.fillStyle = COLORS.icBorder;
+                ctx.fillRect(x - 12, py - 3, 12, 6);
+                ctx.fillRect(x + w, py - 3, 12, 6);
+                // pin numbers (left: 1,2,3,4; right: 8,7,6,5)
+                mono(ctx, x + 4, py, String(i + 1), COLORS.sub, 'left', 9);
+                mono(ctx, x + w - 4, py, String(8 - i), COLORS.sub, 'right', 9);
+            }
+            return { pinL, pinR, x, y, w, h };
+        }
+
+        // Battery (multi-cell)
+        function battery(ctx, x, y, vlabel) {
+            // alternating long/short lines: |- -|- -|- -|
+            ctx.strokeStyle = COLORS.vcc; ctx.lineWidth = 2;
+            // 2 cell pairs
+            let cx = x;
+            for (let i = 0; i < 2; i++) {
+                // long (+)
+                ctx.beginPath(); ctx.moveTo(cx, y - 14); ctx.lineTo(cx, y + 14); ctx.stroke();
+                cx += 6;
+                // short (-)
+                ctx.beginPath(); ctx.moveTo(cx, y - 8); ctx.lineTo(cx, y + 8); ctx.stroke();
+                cx += 10;
+            }
+            // leads
+            ctx.beginPath();
+            ctx.moveTo(x - 20, y); ctx.lineTo(x, y);
+            ctx.moveTo(cx - 4, y); ctx.lineTo(cx + 16, y);
+            ctx.stroke();
+            label(ctx, x + 12, y - 26, vlabel || '5V', COLORS.vcc, 'center', 12, '700');
+            return { plus: [x - 20, y], minus: [cx + 16, y] };
+        }
+
+        // ════════════════════════════════════════════════════════
+        // ─── 1) ASTABLE TRANSISTOR SCHEMATIC ───
+        // ════════════════════════════════════════════════════════
+        (function drawAstableSchema() {
+            const s = setup('canvasAstableSchema');
+            if (!s) return;
+            const { ctx, w, h } = s;
+            bg(ctx, w, h);
+
+            label(ctx, w / 2, 25, 'PRÁCTICA 9 — MULTIVIBRADOR ASTABLE CON TRANSISTORES', COLORS.wire, 'center', 13, '700');
+
+            // VCC rail
+            const VccY = 70;
+            const GndY = 450;
+            const Vcc_xL = 60, Vcc_xR = 840;
+            wire(ctx, [[Vcc_xL, VccY], [Vcc_xR, VccY]], COLORS.vcc, 2);
+            label(ctx, Vcc_xL - 8, VccY, '+5V', COLORS.vcc, 'right', 12, '700');
+
+            // GND rail
+            wire(ctx, [[Vcc_xL, GndY], [Vcc_xR, GndY]], COLORS.gnd, 2);
+            label(ctx, Vcc_xL - 8, GndY, 'GND', COLORS.gnd, 'right', 12, '700');
+
+            // Battery on far left between rails
+            const battX = 110;
+            wire(ctx, [[battX, VccY], [battX, GndY]], COLORS.wireBlack, 1.5);
+            // a small battery symbol
+            ctx.strokeStyle = COLORS.vcc; ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(battX - 14, VccY + 200); ctx.lineTo(battX + 14, VccY + 200); // long
+            ctx.moveTo(battX - 8, VccY + 210); ctx.lineTo(battX + 8, VccY + 210); // short
+            ctx.moveTo(battX - 14, VccY + 220); ctx.lineTo(battX + 14, VccY + 220);
+            ctx.moveTo(battX - 8, VccY + 230); ctx.lineTo(battX + 8, VccY + 230);
+            ctx.stroke();
+            label(ctx, battX + 26, VccY + 215, '5V', COLORS.vcc, 'left', 12, '700');
+
+            // Branches (left half)
+            const Lx_LED = 280, Lx_R10k = 400;
+            // Branches (right half)
+            const Rx_R10k = 540, Rx_LED = 660;
+
+            // ── LEFT BRANCH 1: 220Ω + LED1 → collector Q1
+            // 220 ohm at top
+            resistor(ctx, Lx_LED, VccY + 10, Lx_LED, VccY + 70, '220Ω');
+            // LED1 below resistor
+            led(ctx, Lx_LED, VccY + 110, 'down', 'LED1');
+            // wire LED to collector Q1 (collector at y=330)
+            wire(ctx, [[Lx_LED, VccY + 132], [Lx_LED, 320]], COLORS.wire, 2);
+
+            // ── LEFT BRANCH 2: 10kΩ → base Q2
+            resistor(ctx, Lx_R10k, VccY + 10, Lx_R10k, VccY + 100, '10kΩ');
+            // continues down to base of Q2 (at x=Rx_LED-... we'll use Q2 base at x=600)
+
+            // ── RIGHT BRANCH 1: 10kΩ → base Q1
+            resistor(ctx, Rx_R10k, VccY + 10, Rx_R10k, VccY + 100, '10kΩ');
+
+            // ── RIGHT BRANCH 2: 220Ω + LED2 → collector Q2
+            resistor(ctx, Rx_LED, VccY + 10, Rx_LED, VccY + 70, '220Ω');
+            led(ctx, Rx_LED, VccY + 110, 'down', 'LED2');
+            wire(ctx, [[Rx_LED, VccY + 132], [Rx_LED, 320]], COLORS.wire, 2);
+
+            // ── Transistors
+            const Q1x = Lx_LED, Q1y = 350;
+            const Q2x = Rx_LED, Q2y = 350;
+            npn(ctx, Q1x, Q1y, 'Q1 · 2N2222');
+            npn(ctx, Q2x, Q2y, 'Q2 · 2N2222');
+
+            // wire LED1 down to Q1 collector  (Q1 collector is at x-r? let's say collector node x=Q1x+8, y=Q1y-18)
+            // We already drew wire down to y=320; adjust to land on collector pin (Q1x+8, Q1y-18=332). Re-route.
+            wire(ctx, [[Lx_LED, 320], [Lx_LED, 332], [Q1x + 8, 332]], COLORS.wire, 2);
+            // same for LED2 → Q2 collector
+            wire(ctx, [[Rx_LED, 320], [Rx_LED, 332], [Q2x + 8, 332]], COLORS.wire, 2);
+
+            // ── Q1 emitter to GND
+            wire(ctx, [[Q1x + 8, Q1y + 18], [Q1x + 8, GndY]], COLORS.wire, 2);
+            node(ctx, Q1x + 8, GndY, COLORS.gnd);
+            // ── Q2 emitter to GND
+            wire(ctx, [[Q2x + 8, Q2y + 18], [Q2x + 8, GndY]], COLORS.wire, 2);
+            node(ctx, Q2x + 8, GndY, COLORS.gnd);
+
+            // ── 10k (Lx_R10k) bottom → base of Q2 (Q2x-18, Q2y)
+            // After resistor bottom at (Lx_R10k, VccY+100=170), go down to a node and out to Q2 base
+            const baseNodeQ2 = [Q2x - 18, Q2y];
+            wire(ctx, [[Lx_R10k, VccY + 100], [Lx_R10k, 235]], COLORS.wire, 2);
+            // continue to Q2 base via cap C1 area
+            // We'll create a node at (Lx_R10k, 235) and run to (Q2x-18, 235), then down to Q2 base
+            wire(ctx, [[Lx_R10k, 235], [baseNodeQ2[0], 235], [baseNodeQ2[0], baseNodeQ2[1]]], COLORS.wire, 2);
+            node(ctx, Lx_R10k, 235, COLORS.wire);
+
+            // ── 10k (Rx_R10k) bottom → base of Q1 (Q1x-18, Q1y)
+            const baseNodeQ1 = [Q1x - 18, Q1y];
+            wire(ctx, [[Rx_R10k, VccY + 100], [Rx_R10k, 235]], COLORS.wire, 2);
+            wire(ctx, [[Rx_R10k, 235], [baseNodeQ1[0], 235], [baseNodeQ1[0], baseNodeQ1[1]]], COLORS.wire, 2);
+            node(ctx, Rx_R10k, 235, COLORS.wire);
+
+            // ── C1: between collector Q1 (Q1x+8, 332) and base Q2 (baseNodeQ2)
+            // place horizontally around y=280
+            // Wire from (Q1x+8, 332) up to (Q1x+8, 280) then horizontal to cap left at x=380
+            const c1y = 282;
+            capPolar(ctx, 380, c1y, false, '470µF');
+            // C1 negative side (curved/right) goes to base of Q2 (Lx_R10k node 235 area)
+            // we'll route: cap.right at (398, c1y) → up to (398, 235) join the wire
+            wire(ctx, [[Q1x + 8, 332], [Q1x + 8, c1y], [380 - 18, c1y]], COLORS.wire, 2);
+            wire(ctx, [[380 + 18, c1y], [398, c1y], [398, 235]], COLORS.wire, 2);
+            node(ctx, 398, 235, COLORS.wire);
+
+            // ── C2: between collector Q2 (Q2x+8, 332) and base Q1
+            const c2y = 282;
+            capPolar(ctx, 560, c2y, false, '470µF');
+            wire(ctx, [[Q2x + 8, 332], [Q2x + 8, c2y], [560 + 18, c2y]], COLORS.wire, 2);
+            wire(ctx, [[560 - 18, c2y], [542, c2y], [542, 235]], COLORS.wire, 2);
+            node(ctx, 542, 235, COLORS.wire);
+
+            // base wires from R10k nodes to caps (already drawn implicitly via 235 line)
+            // Need to also draw from (398,235) to (Lx_R10k, 235) etc — already handled by overlap
+
+            // Vcc connections at top of resistors
+            wire(ctx, [[Lx_LED, VccY], [Lx_LED, VccY + 10]], COLORS.wire, 2);
+            wire(ctx, [[Lx_R10k, VccY], [Lx_R10k, VccY + 10]], COLORS.wire, 2);
+            wire(ctx, [[Rx_R10k, VccY], [Rx_R10k, VccY + 10]], COLORS.wire, 2);
+            wire(ctx, [[Rx_LED, VccY], [Rx_LED, VccY + 10]], COLORS.wire, 2);
+            node(ctx, Lx_LED, VccY, COLORS.vcc);
+            node(ctx, Lx_R10k, VccY, COLORS.vcc);
+            node(ctx, Rx_R10k, VccY, COLORS.vcc);
+            node(ctx, Rx_LED, VccY, COLORS.vcc);
+
+            // Annotations
+            label(ctx, 50, h - 30, 'Cuando Q1 conduce → LED1 enciende. Cuando Q2 conduce → LED2 enciende. Los capacitores controlan el tiempo.', COLORS.sub, 'left', 11);
+        })();
+
+        // ════════════════════════════════════════════════════════
+        // ─── 2) ASTABLE TRANSISTOR BREADBOARD ───
+        // ════════════════════════════════════════════════════════
+        (function drawAstableBreadboard() {
+            const s = setup('canvasAstableBreadboard');
+            if (!s) return;
+            const { ctx, w, h } = s;
+            bg(ctx, w, h);
+            label(ctx, w / 2, 25, 'MONTAJE EN PROTOBOARD — ASTABLE CON TRANSISTORES', COLORS.wire, 'center', 13, '700');
+
+            // Battery pack on the left
+            const bx = 50, by = 100, bw = 110, bh = 240;
+            ctx.fillStyle = '#1f2937';
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 8); ctx.fill(); ctx.stroke();
+            // 4 batteries
+            for (let i = 0; i < 4; i++) {
+                const cy = by + 20 + i * 55;
+                ctx.fillStyle = i % 2 ? '#0f172a' : '#334155';
+                ctx.beginPath(); ctx.roundRect(bx + 10, cy, bw - 20, 45, 4); ctx.fill();
+                label(ctx, bx + bw / 2, cy + 22, 'AAA', '#fbbf24', 'center', 11, '700');
+            }
+            label(ctx, bx + bw / 2, by - 12, 'Battery Pack 6V', '#fbbf24', 'center', 12, '700');
+            // Leads from battery
+            const redOut = [bx + bw, by + 25];
+            const blackOut = [bx + bw, by + bh - 25];
+
+            // Breadboard
+            const Bx = 220, By = 70, Bw = 640, Bh = 360;
+            ctx.fillStyle = COLORS.board;
+            ctx.strokeStyle = COLORS.boardLine; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(Bx, By, Bw, Bh, 6); ctx.fill(); ctx.stroke();
+
+            // Power rails (red and blue)
+            const railY = [By + 18, By + 38, By + Bh - 38, By + Bh - 18];
+            // top red
+            ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[0]); ctx.lineTo(Bx + Bw - 14, railY[0]); ctx.stroke();
+            // top blue
+            ctx.strokeStyle = '#2563eb';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[1]); ctx.lineTo(Bx + Bw - 14, railY[1]); ctx.stroke();
+            // bottom red
+            ctx.strokeStyle = '#dc2626';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[2]); ctx.lineTo(Bx + Bw - 14, railY[2]); ctx.stroke();
+            // bottom blue
+            ctx.strokeStyle = '#2563eb';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[3]); ctx.lineTo(Bx + Bw - 14, railY[3]); ctx.stroke();
+
+            // Hole dots simplified (just a sparse representation)
+            ctx.fillStyle = '#94a3b8';
+            for (let c = 0; c < 30; c++) {
+                const hx = Bx + 22 + c * 20;
+                for (let i = 0; i < 4; i++) {
+                    if (i < 2) {
+                        ctx.beginPath(); ctx.arc(hx, railY[i], 1.5, 0, Math.PI * 2); ctx.fill();
+                    } else {
+                        ctx.beginPath(); ctx.arc(hx, railY[i], 1.5, 0, Math.PI * 2); ctx.fill();
+                    }
+                }
+                // middle area holes
+                for (let r = 0; r < 10; r++) {
+                    const hy = By + 70 + r * 18;
+                    ctx.beginPath(); ctx.arc(hx, hy, 1.2, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+
+            // Center channel
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillRect(Bx + 14, By + Bh / 2 - 4, Bw - 28, 8);
+
+            // Battery wires onto top rails
+            wire(ctx, [redOut, [Bx - 4, redOut[1]], [Bx - 4, railY[0]], [Bx + 22, railY[0]]], '#dc2626', 2.5);
+            wire(ctx, [blackOut, [Bx - 10, blackOut[1]], [Bx - 10, railY[1]], [Bx + 22, railY[1]]], '#1f2937', 2.5);
+
+            // Components on the board
+            // Two LEDs at top
+            const led1x = Bx + 180, led1y = By + 90;
+            const led2x = Bx + 460, led2y = By + 90;
+            ctx.fillStyle = COLORS.led;
+            // LED bodies
+            ctx.beginPath(); ctx.arc(led1x, led1y, 9, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(led2x, led2y, 9, 0, Math.PI * 2); ctx.fill();
+            // legs
+            ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.moveTo(led1x - 4, led1y + 8); ctx.lineTo(led1x - 4, railY[0]); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(led1x + 4, led1y + 8); ctx.lineTo(led1x + 4, led1y + 50); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(led2x - 4, led2y + 8); ctx.lineTo(led2x - 4, railY[0]); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(led2x + 4, led2y + 8); ctx.lineTo(led2x + 4, led2y + 50); ctx.stroke();
+
+            // 220Ω resistors (from LED cathode to top rail)
+            function bbResistor(ctx, x1, y1, x2, y2, color) {
+                ctx.strokeStyle = '#fed7aa';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+                const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                ctx.fillStyle = color || '#a78bfa';
+                ctx.strokeStyle = '#475569';
+                ctx.beginPath(); ctx.roundRect(mx - 22, my - 5, 44, 10, 3); ctx.fill(); ctx.stroke();
+                // stripes
+                ctx.fillStyle = '#dc2626'; ctx.fillRect(mx - 14, my - 4, 2, 8);
+                ctx.fillStyle = '#dc2626'; ctx.fillRect(mx - 10, my - 4, 2, 8);
+                ctx.fillStyle = '#a16207'; ctx.fillRect(mx - 6, my - 4, 2, 8);
+            }
+
+            // 220Ω in series with LED1
+            bbResistor(ctx, led1x - 4, led1y + 50, led1x - 60, led1y + 90, '#fde68a');
+            bbResistor(ctx, led2x - 4, led2y + 50, led2x - 60, led2y + 90, '#fde68a');
+
+            // Capacitors (electrolytic): two cylinders in middle area
+            const cap1x = Bx + 240, cap2x = Bx + 360;
+            const capY = By + Bh / 2 - 35;
+            function bbCap(ctx, x, y, polLeft) {
+                ctx.fillStyle = '#1e293b';
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.roundRect(x - 14, y - 26, 28, 52, 4); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#94a3b8';
+                ctx.fillRect(x - 14, y + 10, polLeft ? 14 : 14, 12);
+                ctx.fillStyle = '#f87171';
+                label(ctx, x + (polLeft ? -7 : 7), y + 16, '−', '#f87171', 'center', 11, '700');
+                // pins
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(x - 6, y + 26); ctx.lineTo(x - 6, y + 50); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(x + 6, y + 26); ctx.lineTo(x + 6, y + 50); ctx.stroke();
+                label(ctx, x, y - 36, '470µF', COLORS.cap, 'center', 10, '600');
+            }
+            bbCap(ctx, cap1x, capY, true);
+            bbCap(ctx, cap2x, capY, false);
+
+            // Two transistors (TO-92): half-circles
+            const trY = By + Bh - 130;
+            const tr1x = Bx + 200, tr2x = Bx + 440;
+            function bbTR(ctx, x, y) {
+                ctx.fillStyle = '#0f172a';
+                ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(x, y, 14, 0, Math.PI); ctx.lineTo(x - 14, y); ctx.closePath(); ctx.fill(); ctx.stroke();
+                // 3 pins
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+                for (let i = 0; i < 3; i++) {
+                    const px = x - 8 + i * 8;
+                    ctx.beginPath(); ctx.moveTo(px, y); ctx.lineTo(px, y + 40); ctx.stroke();
+                }
+                label(ctx, x, y - 8, 'N', '#e2e8f0', 'center', 14, '700');
+            }
+            bbTR(ctx, tr1x, trY);
+            bbTR(ctx, tr2x, trY);
+
+            // Wires across (decorative — orange to base, brown/pink crossover, black to ground)
+            // Orange: VCC rail to upper holes
+            // Pink crossing wires (capacitor base wiring)
+            wire(ctx, [[tr1x - 8, trY + 40], [tr1x - 8, By + Bh / 2 + 30], [cap1x - 6, By + Bh / 2 + 30], [cap1x - 6, capY + 50]], '#f472b6', 2);
+            wire(ctx, [[tr2x - 8, trY + 40], [tr2x - 8, By + Bh / 2 + 30], [cap2x + 6, By + Bh / 2 + 30], [cap2x + 6, capY + 50]], '#a78bfa', 2);
+            // Brown wires for cross-coupling (long curved)
+            wire(ctx, [[cap1x + 6, capY + 50], [cap1x + 6, By + Bh / 2 + 60], [tr2x - 8, By + Bh / 2 + 60], [tr2x - 8, trY + 50]], '#a16207', 2);
+            wire(ctx, [[cap2x - 6, capY + 50], [cap2x - 6, By + Bh / 2 + 50], [tr1x - 8, By + Bh / 2 + 50], [tr1x - 8, trY + 50]], '#a16207', 2);
+            // Black emitters to bottom rail
+            wire(ctx, [[tr1x, trY + 40], [tr1x, railY[3]]], '#1f2937', 2);
+            wire(ctx, [[tr2x, trY + 40], [tr2x, railY[3]]], '#1f2937', 2);
+
+            // Annotation
+            label(ctx, w / 2, h - 18, 'Las pilas (≈6V) conectan al rail rojo (+) y al rail azul (−). Los LEDs parpadean alternados.', COLORS.sub, 'center', 11);
+        })();
+
+        // ════════════════════════════════════════════════════════
+        // ─── 3) 555 ASTABLE SCHEMATIC ───
+        // ════════════════════════════════════════════════════════
+        (function draw555Schema() {
+            const s = setup('canvas555Schema');
+            if (!s) return;
+            const { ctx, w, h } = s;
+            bg(ctx, w, h);
+            label(ctx, w / 2, 25, 'PRÁCTICA 10 — MULTIVIBRADOR ASTABLE CON NE555', COLORS.tr, 'center', 13, '700');
+
+            // Rails
+            const VccY = 75, GndY = 470;
+            const xL = 60, xR = 840;
+            wire(ctx, [[xL, VccY], [xR, VccY]], COLORS.vcc, 2);
+            label(ctx, xL - 8, VccY, '+5V', COLORS.vcc, 'right', 12, '700');
+            wire(ctx, [[xL, GndY], [xR, GndY]], COLORS.gnd, 2);
+            label(ctx, xL - 8, GndY, 'GND', COLORS.gnd, 'right', 12, '700');
+
+            // Place 555 chip in the center
+            const chip = ic555(ctx, 380, 240);
+            // Pin coords from chip
+            // Left pins (top→bot): 1 GND, 2 TRIG, 3 OUT, 4 RESET
+            // Right pins (top→bot): 8 VCC, 7 DISCH, 6 THRESH, 5 CTRL
+            const p1 = chip.pinL[0], p2 = chip.pinL[1], p3 = chip.pinL[2], p4 = chip.pinL[3];
+            const p8 = chip.pinR[0], p7 = chip.pinR[1], p6 = chip.pinR[2], p5 = chip.pinR[3];
+
+            // Pin labels next to chip
+            mono(ctx, p1[0] - 8, p1[1], 'GND',    COLORS.sub, 'right', 9);
+            mono(ctx, p2[0] - 8, p2[1], 'TRIG',   COLORS.sub, 'right', 9);
+            mono(ctx, p3[0] - 8, p3[1], 'OUT',    COLORS.sub, 'right', 9);
+            mono(ctx, p4[0] - 8, p4[1], 'RST',    COLORS.sub, 'right', 9);
+            mono(ctx, p8[0] + 8, p8[1], 'VCC',    COLORS.sub, 'left', 9);
+            mono(ctx, p7[0] + 8, p7[1], 'DISCH',  COLORS.sub, 'left', 9);
+            mono(ctx, p6[0] + 8, p6[1], 'THRESH', COLORS.sub, 'left', 9);
+            mono(ctx, p5[0] + 8, p5[1], 'CTRL',   COLORS.sub, 'left', 9);
+
+            // ── Pin 8 (VCC) and Pin 4 (RESET) → +5V
+            wire(ctx, [[p8[0], p8[1]], [p8[0] + 60, p8[1]], [p8[0] + 60, VccY]], COLORS.wireRed, 2);
+            node(ctx, p8[0] + 60, VccY, COLORS.vcc);
+            wire(ctx, [[p4[0], p4[1]], [p4[0] - 40, p4[1]], [p4[0] - 40, VccY + 20], [620, VccY + 20], [620, VccY]], COLORS.wireRed, 2);
+            node(ctx, 620, VccY, COLORS.vcc);
+
+            // ── Pin 1 (GND) → GND
+            wire(ctx, [[p1[0], p1[1]], [p1[0] - 60, p1[1]], [p1[0] - 60, GndY]], COLORS.wireBlack, 2);
+            node(ctx, p1[0] - 60, GndY, COLORS.gnd);
+
+            // ── R_A (1kΩ): Vcc → Pin 7 (DISCH)
+            // place vertically right of chip
+            const RaX = p8[0] + 90;
+            resistor(ctx, RaX, VccY + 10, RaX, VccY + 90, 'Rᴀ=1kΩ');
+            wire(ctx, [[RaX, VccY], [RaX, VccY + 10]], COLORS.wire, 2);
+            wire(ctx, [[RaX, VccY + 90], [RaX, p7[1]], [p7[0], p7[1]]], COLORS.wire, 2);
+            node(ctx, RaX, VccY, COLORS.vcc);
+
+            // ── R_B (47kΩ): Pin 7 → Pin 6 (THRESH = junction)
+            const RbX = p7[0] + 60;
+            resistor(ctx, RbX, p7[1] + 10, RbX, p7[1] + 70, 'Rʙ=47kΩ');
+            // pin 7 → top of Rb
+            wire(ctx, [[p7[0], p7[1]], [RbX, p7[1]], [RbX, p7[1] + 10]], COLORS.wire, 2);
+            node(ctx, RbX, p7[1], COLORS.wire);
+            // bottom of Rb → pin 6 + pin 2 (junction)
+            wire(ctx, [[RbX, p7[1] + 70], [RbX, p6[1]], [p6[0], p6[1]]], COLORS.wire, 2);
+            // pin 2 (TRIG) connects to same junction
+            wire(ctx, [[p2[0], p2[1]], [p2[0] - 70, p2[1]], [p2[0] - 70, p6[1] + 60], [RbX, p6[1] + 60], [RbX, p6[1]]], COLORS.wire, 2);
+            node(ctx, RbX, p6[1], COLORS.wire);
+
+            // ── C (100µF): junction → GND
+            const Cx = RbX + 60;
+            capPolar(ctx, Cx, p6[1] + 50, true, '100µF');
+            wire(ctx, [[RbX, p6[1]], [Cx, p6[1]], [Cx, p6[1] + 32]], COLORS.wire, 2);
+            node(ctx, Cx, p6[1], COLORS.wire);
+            wire(ctx, [[Cx, p6[1] + 68], [Cx, GndY]], COLORS.wire, 2);
+            node(ctx, Cx, GndY, COLORS.gnd);
+
+            // ── Pin 5 (CTRL): small decoupling cap to GND (optional but typical)
+            const Cc_x = p5[0] + 60;
+            capPolar(ctx, Cc_x, p5[1] + 50, true, '10nF');
+            wire(ctx, [[p5[0], p5[1]], [Cc_x, p5[1]], [Cc_x, p5[1] + 32]], COLORS.wire, 2);
+            wire(ctx, [[Cc_x, p5[1] + 68], [Cc_x, GndY]], COLORS.wire, 2);
+            node(ctx, Cc_x, GndY, COLORS.gnd);
+
+            // ── Pin 3 (OUTPUT): two LEDs
+            // LED A: VCC → 220Ω → LED → pin3 (lights when OUT is LOW)
+            // LED B: pin3 → 220Ω → LED → GND (lights when OUT is HIGH)
+            const outX = p3[0] - 80;
+            wire(ctx, [[p3[0], p3[1]], [outX, p3[1]]], COLORS.wireOrange, 2);
+            node(ctx, outX, p3[1], COLORS.wireOrange);
+
+            // Top branch (LED A) — between Vcc and output
+            const ledAx = outX - 40;
+            // 220Ω from VCC down
+            resistor(ctx, ledAx, VccY + 10, ledAx, VccY + 80, '220Ω');
+            // LED A (cathode down → output node)
+            led(ctx, ledAx, VccY + 120, 'down', 'LED-A');
+            // connect from LED bottom to output node
+            wire(ctx, [[ledAx, VccY + 142], [ledAx, p3[1]], [outX, p3[1]]], COLORS.wireOrange, 2);
+            wire(ctx, [[ledAx, VccY], [ledAx, VccY + 10]], COLORS.wireRed, 2);
+            node(ctx, ledAx, VccY, COLORS.vcc);
+
+            // Bottom branch (LED B) — between output and GND
+            // LED B (anode at output, cathode at GND through 220Ω)
+            led(ctx, ledAx, p3[1] + 70, 'down', 'LED-B');
+            // anode (top) at output node:
+            wire(ctx, [[ledAx, p3[1] + 48], [ledAx, p3[1]]], COLORS.wireOrange, 2);
+            // cathode (bottom) → 220Ω → GND
+            resistor(ctx, ledAx, p3[1] + 92, ledAx, p3[1] + 162, '220Ω');
+            wire(ctx, [[ledAx, p3[1] + 162], [ledAx, GndY]], COLORS.wireBlack, 2);
+            node(ctx, ledAx, p3[1], COLORS.wireOrange);
+            node(ctx, ledAx, GndY, COLORS.gnd);
+
+            // Annotation
+            label(ctx, w / 2, h - 24, 'Cuando OUT=HIGH se enciende LED-B. Cuando OUT=LOW se enciende LED-A. Período ≈ 0.693·(Rᴀ+2Rʙ)·C', COLORS.sub, 'center', 11);
+        })();
+
+        // ════════════════════════════════════════════════════════
+        // ─── 4) 555 BREADBOARD ───
+        // ════════════════════════════════════════════════════════
+        (function draw555Breadboard() {
+            const s = setup('canvas555Breadboard');
+            if (!s) return;
+            const { ctx, w, h } = s;
+            bg(ctx, w, h);
+            label(ctx, w / 2, 25, 'MONTAJE EN PROTOBOARD — ASTABLE CON NE555', COLORS.tr, 'center', 13, '700');
+
+            // Battery pack on left
+            const bx = 50, by = 100, bw = 110, bh = 240;
+            ctx.fillStyle = '#1f2937';
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(bx, by, bw, bh, 8); ctx.fill(); ctx.stroke();
+            for (let i = 0; i < 4; i++) {
+                const cy = by + 20 + i * 55;
+                ctx.fillStyle = i % 2 ? '#0f172a' : '#334155';
+                ctx.beginPath(); ctx.roundRect(bx + 10, cy, bw - 20, 45, 4); ctx.fill();
+                label(ctx, bx + bw / 2, cy + 22, 'AAA', '#fbbf24', 'center', 11, '700');
+            }
+            label(ctx, bx + bw / 2, by - 12, 'Battery Pack 6V', '#fbbf24', 'center', 12, '700');
+
+            // Breadboard
+            const Bx = 220, By = 70, Bw = 640, Bh = 360;
+            ctx.fillStyle = COLORS.board;
+            ctx.strokeStyle = COLORS.boardLine; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(Bx, By, Bw, Bh, 6); ctx.fill(); ctx.stroke();
+
+            const railY = [By + 18, By + 38, By + Bh - 38, By + Bh - 18];
+            ctx.strokeStyle = '#dc2626'; ctx.lineWidth = 1;
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[0]); ctx.lineTo(Bx + Bw - 14, railY[0]); ctx.stroke();
+            ctx.strokeStyle = '#2563eb';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[1]); ctx.lineTo(Bx + Bw - 14, railY[1]); ctx.stroke();
+            ctx.strokeStyle = '#dc2626';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[2]); ctx.lineTo(Bx + Bw - 14, railY[2]); ctx.stroke();
+            ctx.strokeStyle = '#2563eb';
+            ctx.beginPath(); ctx.moveTo(Bx + 14, railY[3]); ctx.lineTo(Bx + Bw - 14, railY[3]); ctx.stroke();
+
+            ctx.fillStyle = '#94a3b8';
+            for (let c = 0; c < 30; c++) {
+                const hx = Bx + 22 + c * 20;
+                for (let i = 0; i < 4; i++) {
+                    ctx.beginPath(); ctx.arc(hx, railY[i], 1.5, 0, Math.PI * 2); ctx.fill();
+                }
+                for (let r = 0; r < 10; r++) {
+                    const hy = By + 70 + r * 18;
+                    ctx.beginPath(); ctx.arc(hx, hy, 1.2, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+            ctx.fillStyle = '#9ca3af';
+            ctx.fillRect(Bx + 14, By + Bh / 2 - 4, Bw - 28, 8);
+
+            // Battery wires to rails
+            wire(ctx, [[bx + bw, by + 25], [Bx - 4, by + 25], [Bx - 4, railY[0]], [Bx + 22, railY[0]]], '#dc2626', 2.5);
+            wire(ctx, [[bx + bw, by + bh - 25], [Bx - 10, by + bh - 25], [Bx - 10, railY[1]], [Bx + 22, railY[1]]], '#1f2937', 2.5);
+
+            // 555 chip in center, straddling middle channel
+            const ic_x = Bx + 240, ic_y = By + Bh / 2 - 26;
+            ctx.fillStyle = '#1e1e1e';
+            ctx.strokeStyle = '#000'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(ic_x, ic_y, 120, 52, 4); ctx.fill(); ctx.stroke();
+            // notch
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.arc(ic_x + 12, ic_y + 26, 4, 0, Math.PI * 2); ctx.fill();
+            label(ctx, ic_x + 60, ic_y + 18, '555', '#fef3c7', 'center', 16, '700');
+            label(ctx, ic_x + 60, ic_y + 36, 'NE555P', '#94a3b8', 'center', 8, '500');
+            // 8 pins
+            for (let i = 0; i < 4; i++) {
+                const px = ic_x + 20 + i * 28;
+                ctx.fillStyle = '#cbd5e1'; ctx.fillRect(px - 3, ic_y - 6, 6, 6);
+                ctx.fillRect(px - 3, ic_y + 52, 6, 6);
+            }
+
+            // Components
+            // R_A 1kΩ near top
+            function bbRes(x1, y1, x2, y2, color, label_text) {
+                ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+                const mx = (x1 + x2) / 2, my = (y1 + y2) / 2;
+                ctx.fillStyle = color || '#a78bfa';
+                ctx.strokeStyle = '#475569';
+                ctx.beginPath(); ctx.roundRect(mx - 24, my - 6, 48, 12, 3); ctx.fill(); ctx.stroke();
+                if (label_text) label(ctx, mx, my - 14, label_text, '#fbbf24', 'center', 9, '600');
+            }
+            // Ra: top rail to pin 7 area
+            bbRes(ic_x + 92, By + 60, ic_x + 92, By + 90, '#fde68a', '1kΩ');
+            // Rb: pin 7 to pin 6/2 (across the gap)
+            bbRes(ic_x + 100, By + Bh / 2 - 40, ic_x + 160, By + Bh / 2 - 40, '#fde68a', '47kΩ');
+
+            // 100µF cap (right of chip, vertical)
+            const capX = ic_x + 200, capY = By + Bh / 2 + 30;
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = '#475569'; ctx.lineWidth = 1.5;
+            ctx.beginPath(); ctx.roundRect(capX - 14, capY - 30, 28, 56, 4); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#94a3b8';
+            ctx.fillRect(capX - 14, capY + 14, 28, 12);
+            ctx.fillStyle = '#f87171';
+            label(ctx, capX, capY + 20, '−', '#f87171', 'center', 11, '700');
+            label(ctx, capX, capY - 40, '100µF', COLORS.cap, 'center', 10, '600');
+
+            // Two LEDs (top area)
+            const led1x = Bx + 540, led1y = By + 100;
+            const led2x = Bx + 540, led2y = By + Bh - 100;
+            ctx.fillStyle = COLORS.led;
+            ctx.beginPath(); ctx.arc(led1x, led1y, 9, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(led2x, led2y, 9, 0, Math.PI * 2); ctx.fill();
+            label(ctx, led1x + 18, led1y, 'LED-A', '#f87171', 'left', 10, '600');
+            label(ctx, led2x + 18, led2y, 'LED-B', '#f87171', 'left', 10, '600');
+
+            // 220Ω limiters for LEDs
+            bbRes(led1x, led1y + 18, led1x, led1y + 50, '#fde68a', '220Ω');
+            bbRes(led2x, led2y - 18, led2x, led2y - 50, '#fde68a', '220Ω');
+
+            // Wires
+            // From rail to Ra
+            wire(ctx, [[ic_x + 92, railY[0]], [ic_x + 92, By + 60]], '#dc2626', 2);
+            // From Ra to pin 7 (top right of chip = ic_x+76, ic_y-6)
+            wire(ctx, [[ic_x + 92, By + 90], [ic_x + 92, ic_y - 6]], '#fb923c', 2);
+            // From pin 8 to red rail
+            wire(ctx, [[ic_x + 104, ic_y - 6], [ic_x + 104, railY[0]]], '#dc2626', 2);
+            // From pin 4 to red rail
+            wire(ctx, [[ic_x + 76, ic_y + 58], [ic_x + 76, railY[2] - 4], [ic_x + 76, railY[2]]], '#dc2626', 2);
+            // From pin 1 to blue rail
+            wire(ctx, [[ic_x + 20, ic_y + 58], [ic_x + 20, railY[3]]], '#1f2937', 2);
+            // Pin 7 to Rb
+            wire(ctx, [[ic_x + 92, ic_y - 6], [ic_x + 92, By + Bh / 2 - 40], [ic_x + 100, By + Bh / 2 - 40]], '#fbbf24', 2);
+            // Rb to pin 6/2 junction
+            wire(ctx, [[ic_x + 160, By + Bh / 2 - 40], [ic_x + 200, By + Bh / 2 - 40]], '#fbbf24', 2);
+            // Junction to pin 6 (top-right area of chip, pin 6 is right side 2nd from bottom)
+            wire(ctx, [[ic_x + 200, By + Bh / 2 - 40], [ic_x + 200, ic_y - 6]], '#a78bfa', 2);
+            // Junction to pin 2 (left side, 2nd from top: ic_x + 48, ic_y - 6)
+            wire(ctx, [[ic_x + 200, By + Bh / 2 - 40], [ic_x + 220, By + Bh / 2 - 60], [ic_x + 48, By + Bh / 2 - 60], [ic_x + 48, ic_y - 6]], '#a78bfa', 2);
+            // Cap top to junction
+            wire(ctx, [[capX, capY - 30], [capX, By + Bh / 2 - 40], [ic_x + 200, By + Bh / 2 - 40]], '#1f2937', 2);
+            // Cap bottom to blue rail
+            wire(ctx, [[capX, capY + 26], [capX, railY[3]]], '#1f2937', 2);
+
+            // Output (pin 3, left side bottom = ic_x+48, ic_y+58)
+            // To LEDs network
+            wire(ctx, [[ic_x + 48, ic_y + 58], [ic_x + 48, By + Bh / 2 + 20], [Bx + 460, By + Bh / 2 + 20], [Bx + 460, led2y]], '#fb923c', 2);
+            // LED-A from VCC rail → 220 → led-A → output
+            wire(ctx, [[led1x, railY[0]], [led1x, led1y - 9]], '#dc2626', 2);
+            wire(ctx, [[led1x, led1y + 50], [led1x, By + Bh / 2 + 20], [Bx + 460, By + Bh / 2 + 20]], '#fb923c', 2);
+            // LED-B output → led-B → 220 → GND rail
+            wire(ctx, [[Bx + 460, By + Bh / 2 + 20], [Bx + 460, led2y]], '#fb923c', 2);
+            wire(ctx, [[led2x, led2y - 50], [led2x, led2y - 9]], '#fbbf24', 2);
+            wire(ctx, [[led2x, led2y + 9], [led2x, railY[3]]], '#1f2937', 2);
+
+            label(ctx, w / 2, h - 18, 'El 555 se monta a caballo del canal central. Confía en la numeración: la muesca marca el pin 1.', COLORS.sub, 'center', 11);
+        })();
+
+    })();
+
+    // Polyfill roundRect on old browsers (just in case)
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (typeof r === 'number') r = [r, r, r, r];
+            this.beginPath();
+            this.moveTo(x + r[0], y);
+            this.lineTo(x + w - r[1], y);
+            this.quadraticCurveTo(x + w, y, x + w, y + r[1]);
+            this.lineTo(x + w, y + h - r[2]);
+            this.quadraticCurveTo(x + w, y + h, x + w - r[2], y + h);
+            this.lineTo(x + r[3], y + h);
+            this.quadraticCurveTo(x, y + h, x, y + h - r[3]);
+            this.lineTo(x, y + r[0]);
+            this.quadraticCurveTo(x, y, x + r[0], y);
+            return this;
+        };
+    }
+    </script>
+
+</body>
+</html>
