@@ -137,6 +137,17 @@ const topics = [
         icon: "ph-rocket-launcher",
         link: "topics/topic-12.html"
     },
+    {
+        id: 13,
+        title: "13. Prácticas Finales del Curso de Robótica",
+        description: "Selecciona una de las opciones disponibles (Webots, Maze, RC Car, Spider, Brazo Hidráulico, Arduino) y construye tu proyecto final para acreditar la materia.",
+        category: "proyecto",
+        level: "Final",
+        color: "purple",
+        date: "19/MAY/2026 7:00 AM",
+        icon: "ph-trophy",
+        link: "topics/topic-13.html"
+    },
 
     // Más temas pueden ser añadidos aquí
 ];

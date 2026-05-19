@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="RoboLab - Prácticas Finales del Curso de Robótica">
+    <meta name="keywords" content="Robótica, Práctica Final, Webots, VEX, RC Car, Spider Robot, Brazo Hidráulico, Arduino">
+    <title>RoboLab - Prácticas Finales del Curso de Robótica</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind Config -->
+    <script src="../js/tailwind-config.js"></script>
+
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../css/main.css">
+
+    <style>
+        .option-card {
+            transition: transform 200ms ease, border-color 200ms ease, background 200ms ease;
+        }
+        .option-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(56, 189, 248, 0.35);
+            background: rgba(56, 189, 248, 0.04);
+        }
+        .step-number {
+            width: 28px; height: 28px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            background: rgba(56, 189, 248, 0.12);
+            color: #38bdf8;
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .student-row {
+            transition: background 150ms ease;
+        }
+        .student-row:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .project-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 9999px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+        .tag-webots   { background: rgba(56,189,248,0.10); color: #38bdf8; border: 1px solid rgba(56,189,248,0.25); }
+        .tag-maze     { background: rgba(52,211,153,0.10); color: #34d399; border: 1px solid rgba(52,211,153,0.25); }
+        .tag-rc       { background: rgba(251,146,60,0.10); color: #fb923c; border: 1px solid rgba(251,146,60,0.25); }
+        .tag-spider   { background: rgba(192,132,252,0.10); color: #c084fc; border: 1px solid rgba(192,132,252,0.25); }
+        .tag-arm      { background: rgba(244,114,182,0.10); color: #f472b6; border: 1px solid rgba(244,114,182,0.25); }
+        .tag-arduino  { background: rgba(250,204,21,0.10); color: #facc15; border: 1px solid rgba(250,204,21,0.25); }
+        .tag-pending  { background: rgba(148,163,184,0.10); color: #94a3b8; border: 1px solid rgba(148,163,184,0.25); }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="fixed w-full z-50 bg-[#0B0F19]/90 backdrop-blur-md border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <a href="../index.html" class="flex items-center gap-3 cursor-pointer">
+                    <div class="relative flex items-center justify-center w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 shadow-lg shadow-cyan-500/20">
+                        <i class="ph ph-robot text-white text-2xl"></i>
+                    </div>
+                    <span class="font-display font-bold text-2xl tracking-tight text-white">Robo<span class="text-neon-blue">Lab</span></span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="../index.html" class="text-slate-300 hover:text-white transition">
+                        <i class="ph ph-arrow-left mr-2"></i>Volver al inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1 pt-32 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <!-- Header -->
+            <div class="mb-12">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-500/10 text-purple-300 border border-purple-500/20">
+                        PROYECTO FINAL
+                    </span>
+                    <span class="text-sm text-slate-500 flex items-center gap-1">
+                        <i class="ph ph-calendar"></i> 19 de Mayo 2026
+                    </span>
+                </div>
+
+                <h1 class="font-display text-4xl md:text-5xl font-bold text-white mb-4">
+                    Prácticas Finales del Curso de Robótica
+                </h1>
+
+                <p class="text-xl text-slate-400">
+                    Selecciona una de las opciones disponibles y construye tu proyecto final.
+                    Cada alumno tiene su práctica asignada y deberá entregarla para acreditar la materia.
+                </p>
+            </div>
+
+            <!-- Aviso obligatorio -->
+            <div class="p-5 bg-red-500/5 border border-red-500/30 rounded-xl flex gap-4 mb-12">
+                <i class="ph ph-warning-circle text-red-400 text-2xl flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h5 class="text-red-300 font-bold text-base mb-1">Requisito obligatorio</h5>
+                    <p class="text-sm text-red-100/80 leading-relaxed">
+                        Para acreditar la materia, se debe entregar la <strong>práctica final de electrónica</strong>
+                        además del <strong>robot del proyecto final</strong>. Ambos entregables son indispensables.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Opciones de Proyecto -->
+            <section class="mb-16">
+                <h2 class="text-2xl font-bold text-white mb-2">Opciones de Proyecto</h2>
+                <p class="text-slate-400 mb-8">Estas son las prácticas disponibles. Revisa los pasos y recursos de cada una.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+                    <!-- Opción 1: Webots -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                                <i class="ph ph-monitor-play text-2xl text-neon-blue"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-webots mb-2">Opción 1</span>
+                                <h3 class="text-xl font-bold text-white mt-2">Simulador Webots</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Instalar el simulador Webots.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Explorar los distintos robots simulados.</span></li>
+                            <li class="flex gap-2"><span class="step-number">3</span><span>Elegir uno y modificar su código con ayuda de una IA (Gemini, Claude, ChatGPT).</span></li>
+                            <li class="flex gap-2"><span class="step-number">4</span><span>Hacer que el robot realice una acción diferente.</span></li>
+                            <li class="flex gap-2"><span class="step-number">5</span><span>Grabar pantalla y enviarlo por WhatsApp.</span></li>
+                        </ul>
+                        <a href="https://cyberbotics.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-neon-blue hover:text-cyan-300 transition text-sm font-medium">
+                            <i class="ph ph-link"></i> cyberbotics.com
+                        </a>
+                    </div>
+
+                    <!-- Opción 2: Maze Robot -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                                <i class="ph ph-maze text-2xl text-neon-green"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-maze mb-2">Opción 2</span>
+                                <h3 class="text-xl font-bold text-white mt-2">Laberinto Robot (VEX VR)</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Acceder al simulador VEX VR.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Seleccionar <em>Playground Wall Maze</em>.</span></li>
+                            <li class="flex gap-2"><span class="step-number">3</span><span>Programar al carrito para que pase por todos los puntos azules o verdes hasta llegar a la meta.</span></li>
+                            <li class="flex gap-2"><span class="step-number">4</span><span>Grabar pantalla y enviarlo por WhatsApp.</span></li>
+                        </ul>
+                        <a href="https://vr.vex.com/" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-neon-green hover:text-emerald-300 transition text-sm font-medium">
+                            <i class="ph ph-link"></i> vr.vex.com
+                        </a>
+                    </div>
+
+                    <!-- Opción 3: RC Car -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
+                                <i class="ph ph-car text-2xl text-orange-400"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-rc mb-2">Opción 3</span>
+                                <h3 class="text-xl font-bold text-white mt-2">RC Car</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Ver el tutorial en video paso a paso.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Reunir los componentes necesarios.</span></li>
+                            <li class="flex gap-2"><span class="step-number">3</span><span>Construir el coche siguiendo el video.</span></li>
+                        </ul>
+                        <a href="https://www.youtube.com/watch?v=NL5-FV28uRA&list=PL65K4CvwOnGQ5SGHmgZN_peqpVgPUltUN&index=8" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-orange-400 hover:text-orange-300 transition text-sm font-medium">
+                            <i class="ph ph-youtube-logo"></i> Ver tutorial
+                        </a>
+                    </div>
+
+                    <!-- Opción 4: Spider Robot -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center">
+                                <i class="ph ph-bug text-2xl text-neon-purple"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-spider mb-2">Opción 4</span>
+                                <h3 class="text-xl font-bold text-white mt-2">Robot Spider</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Analizar el video del robot araña.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Construirlo siguiendo el diseño mostrado.</span></li>
+                        </ul>
+                        <a href="https://www.youtube.com/watch?v=YMfRuKXo-h8&list=PL65K4CvwOnGQ5SGHmgZN_peqpVgPUltUN&index=13" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-neon-purple hover:text-purple-300 transition text-sm font-medium">
+                            <i class="ph ph-youtube-logo"></i> Ver tutorial
+                        </a>
+                    </div>
+
+                    <!-- Opción 5: Brazo Hidráulico -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-pink-500/10 border border-pink-500/20 flex items-center justify-center">
+                                <i class="ph ph-hand-grabbing text-2xl text-pink-400"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-arm mb-2">Opción 5</span>
+                                <h3 class="text-xl font-bold text-white mt-2">Brazo Hidráulico</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Seguir el tutorial del video.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Construir el brazo articulado controlado por jeringas hidráulicas.</span></li>
+                        </ul>
+                        <a href="https://www.youtube.com/watch?v=j4vn2uHj3Wg&list=PL65K4CvwOnGQ5SGHmgZN_peqpVgPUltUN&index=17" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-pink-400 hover:text-pink-300 transition text-sm font-medium">
+                            <i class="ph ph-youtube-logo"></i> Ver tutorial
+                        </a>
+                    </div>
+
+                    <!-- Opción 6: Arduino Obstacle -->
+                    <div class="option-card glass-card rounded-2xl p-6 border border-white/5">
+                        <div class="flex items-start gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/20 flex items-center justify-center">
+                                <i class="ph ph-cpu text-2xl text-yellow-400"></i>
+                            </div>
+                            <div>
+                                <span class="project-tag tag-arduino mb-2">Opción 6</span>
+                                <h3 class="text-xl font-bold text-white mt-2">Arduino Obstacle Robot</h3>
+                            </div>
+                        </div>
+                        <ul class="space-y-2 text-sm text-slate-300 mb-4">
+                            <li class="flex gap-2"><span class="step-number">1</span><span>Seguir el tutorial del video.</span></li>
+                            <li class="flex gap-2"><span class="step-number">2</span><span>Construir el robot evita-obstáculos basado en Arduino.</span></li>
+                        </ul>
+                        <a href="https://www.youtube.com/watch?v=1n_KjpMfVT0&list=PL65K4CvwOnGQ5SGHmgZN_peqpVgPUltUN&index=16" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-yellow-400 hover:text-yellow-300 transition text-sm font-medium">
+                            <i class="ph ph-youtube-logo"></i> Ver tutorial
+                        </a>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Asignaciones -->
+            <section class="mb-12">
+                <h2 class="text-2xl font-bold text-white mb-2">Asignaciones por Alumno</h2>
+                <p class="text-slate-400 mb-6">Cada estudiante tiene asignado el proyecto que deberá presentar.</p>
+
+                <div class="glass-panel rounded-2xl overflow-hidden border border-white/5">
+                    <table class="w-full">
+                        <thead class="bg-white/5 border-b border-white/5">
+                            <tr>
+                                <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-3">Alumno</th>
+                                <th class="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-6 py-3">Proyecto Asignado</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Missael</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-maze"><i class="ph ph-maze"></i> Maze Robot</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Martha</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-arm"><i class="ph ph-hand-grabbing"></i> Brazo Hidráulico</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Luis</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-arm"><i class="ph ph-hand-grabbing"></i> Brazo Hidráulico</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Angel</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-spider"><i class="ph ph-bug"></i> Robot Spider</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Izael</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-spider"><i class="ph ph-bug"></i> Robot Spider</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Ruben</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-rc"><i class="ph ph-car"></i> RC Car</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Enrique</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-rc"><i class="ph ph-car"></i> RC Car</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Michael</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-maze"><i class="ph ph-maze"></i> Maze Robot</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Evelio</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-webots"><i class="ph ph-monitor-play"></i> Webots</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Johann</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-pending"><i class="ph ph-clock"></i> Por asignar</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Margarita</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-pending"><i class="ph ph-clock"></i> Por asignar</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Itzel</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-pending"><i class="ph ph-clock"></i> Por asignar</span></td>
+                            </tr>
+                            <tr class="student-row">
+                                <td class="px-6 py-3 text-slate-200 font-medium">Valeria</td>
+                                <td class="px-6 py-3"><span class="project-tag tag-rc"><i class="ph ph-car"></i> RC Car con Transmisor</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Nota final -->
+            <div class="p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl flex gap-3 mb-12">
+                <i class="ph ph-info text-neon-blue text-xl flex-shrink-0 mt-0.5"></i>
+                <div>
+                    <h5 class="text-neon-blue font-bold text-sm mb-1">Entrega</h5>
+                    <p class="text-sm text-blue-200/70 leading-relaxed">
+                        Para las opciones de simulación (Webots y Laberinto VEX) basta con grabar la pantalla y enviarlo por WhatsApp.
+                        Para los proyectos físicos, se debe presentar el robot construido y demostrar su funcionamiento.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Navegación entre temas -->
+            <div class="flex justify-between items-center pt-12 border-t border-white/10">
+                <a href="topic-12.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <i class="ph ph-arrow-left"></i>
+                    <span>Tema Anterior</span>
+                </a>
+                <a href="../index.html" class="flex items-center gap-2 text-slate-400 hover:text-white transition">
+                    <span>Volver al inicio</span>
+                    <i class="ph ph-house"></i>
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black/30 border-t border-white/5 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-slate-500 text-sm">
+                &copy; 2024 RoboLab OpenCourseWare. Acceso libre para estudiantes de ingeniería.
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>
